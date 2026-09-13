@@ -4,10 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "@/lib/site-data";
 
 export default function NebuExperience({ initialData }: { initialData: SiteData }) {
+  const broadcast = initialData.featuredBroadcast;
+  const audio = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const audio = useRef<HTMLAudioElement | null>(null);
-  const trackReady = Boolean(initialData.currentTrack.audioUrl);
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  const videoReady = Boolean(broadcast.videoUrl) && !videoFailed;
+  const audioReady = Boolean(broadcast.audioUrl);
+  const fallbackImage = broadcast.imageUrl || broadcast.posterUrl || initialData.characterUrl;
+  const videoPoster = broadcast.posterUrl || broadcast.imageUrl || initialData.characterUrl || undefined;
 
   useEffect(() => {
     const player = audio.current;
@@ -16,23 +22,30 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     const stop = () => setPlaying(false);
     player.addEventListener("timeupdate", sync);
     player.addEventListener("ended", stop);
+    player.addEventListener("pause", stop);
     return () => {
       player.removeEventListener("timeupdate", sync);
       player.removeEventListener("ended", stop);
+      player.removeEventListener("pause", stop);
     };
-  }, []);
+  }, [audioReady, videoReady]);
 
   async function togglePlayback() {
     const player = audio.current;
-    if (!player || !trackReady) return;
+    if (!player || !audioReady) return;
     if (player.paused) {
-      await player.play();
-      setPlaying(true);
+      try {
+        await player.play();
+        setPlaying(true);
+      } catch {
+        setPlaying(false);
+      }
     } else {
       player.pause();
-      setPlaying(false);
     }
   }
+
+  const broadcastMode = videoReady ? "MOTION FEED" : audioReady ? "IMAGE + AUDIO" : fallbackImage ? "VISUAL FEED" : "SIGNAL PENDING";
 
   return (
     <main className="shell">
@@ -43,8 +56,8 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         </a>
         <div className="system-line"><i /> KINGDOM NETWORK // DEGRADED</div>
         <nav>
-          <a href="#lore">LORE</a>
           <a href="#broadcast">BROADCAST</a>
+          <a href="#lore">LORE</a>
         </nav>
       </header>
 
@@ -63,37 +76,61 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           </div>
         </div>
 
-        <div className="portrait-column">
-          <div className="portrait-frame">
-            <div className="frame-code">SUBJECT_N4X33 / VISUAL RECORD</div>
-            {initialData.characterUrl ? (
-              <img src={initialData.characterUrl} alt="NEBUCHADREKTZAR character" />
+        <div id="broadcast" className="broadcast-stage">
+          <div className="broadcast-head">
+            <span>FEATURED BROADCAST</span>
+            <small><i /> {broadcastMode}</small>
+          </div>
+
+          <div className="media-frame">
+            {videoReady ? (
+              <video
+                key={broadcast.videoUrl}
+                src={broadcast.videoUrl}
+                poster={videoPoster}
+                controls
+                playsInline
+                preload="metadata"
+                onError={() => setVideoFailed(true)}
+              >
+                Your browser does not support video playback.
+              </video>
+            ) : fallbackImage ? (
+              <img src={fallbackImage} alt={`${broadcast.title} broadcast artwork`} />
             ) : (
-              <div className="portrait-placeholder" aria-label="NEBUCHADREKTZAR artwork placeholder">
+              <div className="broadcast-placeholder" aria-label="Featured broadcast awaiting media">
                 <span className="crown">♛</span>
                 <strong>N4X33</strong>
-                <div className="grass">///// ///// /////</div>
+                <small>TRANSMISSION AWAITING MEDIA</small>
               </div>
             )}
+            <div className="frame-code">ROYAL_SIGNAL // {videoReady ? "VIDEO" : "FALLBACK"}</div>
             <div className="scanline" />
           </div>
-          <div className="portrait-caption"><b>LAST SEEN:</b> OUTSIDE // EATING GRASS // STILL BULLISH</div>
-        </div>
-      </section>
 
-      <section id="broadcast" className="broadcast">
-        <div className="broadcast-label"><span>ROYAL BROADCAST</span><small>ONE SONG FROM THE FIELD</small></div>
-        <div className="player">
-          <button onClick={togglePlayback} disabled={!trackReady} aria-label={playing ? "Pause" : "Play"}>
-            {trackReady ? (playing ? "Ⅱ" : "▶") : "—"}
-          </button>
-          <div className="track-meta">
-            <small>{initialData.currentTrack.subtitle}</small>
-            <strong>{initialData.currentTrack.title}</strong>
-            <div className="progress"><i style={{ width: `${Math.round(progress * 100)}%` }} /></div>
+          <div className="broadcast-meta">
+            <div className="broadcast-title">
+              <small>{broadcast.subtitle}</small>
+              <strong>{broadcast.title}</strong>
+            </div>
+
+            {!videoReady && (
+              <div className="audio-row">
+                <button onClick={togglePlayback} disabled={!audioReady} aria-label={playing ? "Pause broadcast audio" : "Play broadcast audio"}>
+                  {audioReady ? (playing ? "Ⅱ" : "▶") : "—"}
+                </button>
+                <div className="audio-progress">
+                  <div className="progress"><i style={{ width: `${Math.round(progress * 100)}%` }} /></div>
+                  <small>{audioReady ? (playing ? "TRANSMITTING" : "PLAY FIELD AUDIO") : "AUDIO NOT YET RECEIVED"}</small>
+                </div>
+                {audioReady && <audio ref={audio} src={broadcast.audioUrl} preload="metadata" />}
+              </div>
+            )}
           </div>
-          <div className="track-state">{trackReady ? (playing ? "TRANSMITTING" : "READY") : "AUDIO INTAKE"}</div>
-          {trackReady && <audio ref={audio} src={initialData.currentTrack.audioUrl} preload="metadata" />}
+
+          <div className="broadcast-caption">
+            <b>{videoReady ? "LIVE FILE:" : "FALLBACK FILE:"}</b> THE KING IS STILL OUTSIDE // SIGNAL QUALITY QUESTIONABLE
+          </div>
         </div>
       </section>
 
