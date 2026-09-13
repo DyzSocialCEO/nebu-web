@@ -1,6 +1,15 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+export type FeaturedBroadcast = {
+  title: string;
+  subtitle: string;
+  videoUrl: string;
+  posterUrl: string;
+  imageUrl: string;
+  audioUrl: string;
+};
+
 export type SiteData = {
   status: string;
   eyebrow: string;
@@ -8,7 +17,7 @@ export type SiteData = {
   heroCopy: string;
   characterUrl: string;
   contractAddress: string;
-  currentTrack: { title: string; subtitle: string; audioUrl: string };
+  featuredBroadcast: FeaturedBroadcast;
   lore: Array<{ code: string; title: string; copy: string }>;
   socials: { x: string; telegram: string };
 };
@@ -20,9 +29,12 @@ export const defaultSiteData: SiteData = {
   heroCopy: "He looked at the charts. The charts looked back. Now he eats grass.",
   characterUrl: "",
   contractAddress: "",
-  currentTrack: {
+  featuredBroadcast: {
     title: "THE BOOK OF REKT",
-    subtitle: "FIELD RECORDING 001",
+    subtitle: "FIELD TRANSMISSION 001",
+    videoUrl: "",
+    posterUrl: "",
+    imageUrl: "",
     audioUrl: "",
   },
   lore: [
@@ -42,7 +54,12 @@ function cleanString(value: unknown, fallback: string, max = 500) {
 
 export function normalizeSiteData(value: unknown): SiteData {
   const input = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
-  const track = input.currentTrack && typeof input.currentTrack === "object" ? (input.currentTrack as Record<string, unknown>) : {};
+  const legacyTrack = input.currentTrack && typeof input.currentTrack === "object"
+    ? (input.currentTrack as Record<string, unknown>)
+    : {};
+  const featured = input.featuredBroadcast && typeof input.featuredBroadcast === "object"
+    ? (input.featuredBroadcast as Record<string, unknown>)
+    : legacyTrack;
   const socials = input.socials && typeof input.socials === "object" ? (input.socials as Record<string, unknown>) : {};
   const loreInput = Array.isArray(input.lore) ? input.lore.slice(0, 6) : defaultSiteData.lore;
   const lore = loreInput.map((item, i) => {
@@ -62,10 +79,13 @@ export function normalizeSiteData(value: unknown): SiteData {
     heroCopy: cleanString(input.heroCopy, defaultSiteData.heroCopy, 300),
     characterUrl: cleanString(input.characterUrl, defaultSiteData.characterUrl, 1000),
     contractAddress: cleanString(input.contractAddress, defaultSiteData.contractAddress, 200),
-    currentTrack: {
-      title: cleanString(track.title, defaultSiteData.currentTrack.title, 120),
-      subtitle: cleanString(track.subtitle, defaultSiteData.currentTrack.subtitle, 120),
-      audioUrl: cleanString(track.audioUrl, defaultSiteData.currentTrack.audioUrl, 1000),
+    featuredBroadcast: {
+      title: cleanString(featured.title, defaultSiteData.featuredBroadcast.title, 120),
+      subtitle: cleanString(featured.subtitle, defaultSiteData.featuredBroadcast.subtitle, 120),
+      videoUrl: cleanString(featured.videoUrl, defaultSiteData.featuredBroadcast.videoUrl, 1000),
+      posterUrl: cleanString(featured.posterUrl, defaultSiteData.featuredBroadcast.posterUrl, 1000),
+      imageUrl: cleanString(featured.imageUrl, defaultSiteData.featuredBroadcast.imageUrl, 1000),
+      audioUrl: cleanString(featured.audioUrl, defaultSiteData.featuredBroadcast.audioUrl, 1000),
     },
     lore: lore.length ? lore : defaultSiteData.lore,
     socials: {
