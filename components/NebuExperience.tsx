@@ -51,7 +51,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     <main className="shell">
       <header className="topbar">
         <a className="brand" href="#top" aria-label="NEBUCHADREKTZAR home">
-          <span className="sigil">N</span>
+          <img className="brand-mark" src="/nebu-fallen-king.webp" alt="" aria-hidden="true" />
           <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small></span>
         </a>
         <div className="system-line"><i /> KINGDOM NETWORK // DEGRADED</div>
