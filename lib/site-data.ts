@@ -24,23 +24,23 @@ export type SiteData = {
 
 export const defaultSiteData: SiteData = {
   status: "GRAZING",
-  eyebrow: "DANIEL 4:33 // ROYAL SYSTEM FAILURE",
-  heroTitle: "THE KING HAS LEFT THE PALACE.",
-  heroCopy: "He looked at the charts. The charts looked back. Now he eats grass.",
+  eyebrow: "DANIEL 4:33 // DEGEN KINGDOM INCIDENT",
+  heroTitle: "KING OF BABYLON. NOW REKT.",
+  heroCopy: "Had a kingdom. Found leverage. Now he eats grass and raps for money.",
   characterUrl: "/nebu-fallen-king.webp",
   contractAddress: "",
   featuredBroadcast: {
     title: "THE BOOK OF REKT",
-    subtitle: "FIELD TRANSMISSION 001",
+    subtitle: "ROYAL RECORDS // DROP 001",
     videoUrl: "",
     posterUrl: "",
     imageUrl: "",
     audioUrl: "",
   },
   lore: [
-    { code: "01 / PRIDE", title: "HE THOUGHT HE WAS HIM.", copy: "The bags were green. The ego became a kingdom. This was medically unwise." },
-    { code: "02 / EXILE", title: "MARKET SAID GO OUTSIDE.", copy: "Dominion revoked. Crown retained for absolutely no practical reason." },
-    { code: "03 / GRAZING", title: "DANIEL 4:33.", copy: "Seven times later, our sovereign has discovered grass and refuses to elaborate." },
+    { code: "01 / EGO", title: "HE THOUGHT KING MEANT RISK-FREE.", copy: "Babylon was booming, the treasury was full, and somebody forgot to explain drawdown to His Majesty." },
+    { code: "02 / LIQUIDATION", title: "THE PALACE BECAME COLLATERAL.", copy: "One heroic leverage decision later, the kingdom had new owners and the royal credit score had become a historical artifact." },
+    { code: "03 / CAREER PIVOT", title: "NOW HE RAPS FOR RENT.", copy: "Daniel 4:33 supplied the grass. The trenches supplied the microphone. The comeback album is currently financing Babylon 2.0." },
   ],
   socials: { x: "", telegram: "" },
 };
