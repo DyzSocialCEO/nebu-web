@@ -23,24 +23,24 @@ export type SiteData = {
 };
 
 export const defaultSiteData: SiteData = {
-  status: "GRAZING",
-  eyebrow: "DANIEL 4:33 // ROYAL SYSTEM FAILURE",
-  heroTitle: "THE KING HAS LEFT THE PALACE.",
-  heroCopy: "He looked at the charts. The charts looked back. Now he eats grass.",
+  status: "STILL EARLY",
+  eyebrow: "ROYAL TRANSMISSION // CONFIDENCE UNCHANGED",
+  heroTitle: "I'M NOT WRONG. I'M EARLY.",
+  heroCopy: "I don't have a job. I have a rap career and a thesis.",
   characterUrl: "/nebu-fallen-king.webp",
   contractAddress: "",
   featuredBroadcast: {
-    title: "THE BOOK OF REKT",
-    subtitle: "FIELD TRANSMISSION 001",
+    title: "HE SAID SOON",
+    subtitle: "I MADE ANOTHER ONE. YOU'RE WELCOME.",
     videoUrl: "",
     posterUrl: "",
     imageUrl: "",
     audioUrl: "",
   },
   lore: [
-    { code: "01 / PRIDE", title: "HE THOUGHT HE WAS HIM.", copy: "The bags were green. The ego became a kingdom. This was medically unwise." },
-    { code: "02 / EXILE", title: "MARKET SAID GO OUTSIDE.", copy: "Dominion revoked. Crown retained for absolutely no practical reason." },
-    { code: "03 / GRAZING", title: "DANIEL 4:33.", copy: "Seven times later, our sovereign has discovered grass and refuses to elaborate." },
+    { code: "01 / CLASSIC", title: "DON'T SELL YET", copy: "Recorded during a 40% day. My best work, according to me." },
+    { code: "02 / DINNER", title: "GRASS FED", copy: "A song about dinner. Dinner is going well. Please stop asking." },
+    { code: "03 / ARCHIVE", title: "HAVE YOU FORGOTTEN", copy: "For the ones who left. No hard feelings. I wrote your name down." },
   ],
   socials: { x: "", telegram: "" },
 };
