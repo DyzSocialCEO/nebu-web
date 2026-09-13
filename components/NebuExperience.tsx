@@ -1,79 +1,43 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { SiteData } from "@/lib/site-data";
+import NebuPulse from "@/components/NebuPulse";
 
-const fallStory = [
-  {
-    number: "01",
-    label: "THE EGO",
-    title: "HE LOOKED AT BABYLON AND GOT WAY TOO COMFORTABLE.",
-    copy: "Palaces. Gold. Chariots. Zero risk management. His Majesty concluded this meant he was basically invincible.",
-    quote: "I BUILT THIS. WHAT COULD POSSIBLY GO WRONG?",
-  },
-  {
-    number: "02",
-    label: "THE GROUP CHAT",
-    title: "SOME PALACE INTERN EXPLAINED LEVERAGE.",
-    copy: "The presentation should have ended at 'high risk.' Instead somebody said 50x and the king heard '50 kingdoms.'",
-    quote: "YOUR MAJESTY, TECHNICALLY THE UPSIDE IS ENORMOUS.",
-  },
-  {
-    number: "03",
-    label: "THE TRADE",
-    title: "HE PUT THE ROYAL TREASURY ON ONE CANDLE.",
-    copy: "Advisers asked about a stop loss. He reminded them he was the king. History has not been kind to this answer.",
-    quote: "STOP LOSS? I AM THE STOP LOSS.",
-  },
-  {
-    number: "04",
-    label: "THE LIQUIDATION",
-    title: "BABYLON GOT MARGIN-CALLED BEFORE LUNCH.",
-    copy: "Treasury gone. Palace repossessed. Royal credit score cooked. Even the chariot people stopped answering his calls.",
-    quote: "PLEASE DEPOSIT ADDITIONAL COLLATERAL.",
-  },
-  {
-    number: "05",
-    label: "DANIEL 4:33",
-    title: "THE MARKET FINALLY TOLD HIM TO GO TOUCH GRASS.",
-    copy: "He took the instruction extremely literally. Crown stayed on. Dignity did not.",
-    quote: "CURRENT DIET: LOCALLY SOURCED GRASS.",
-  },
-  {
-    number: "06",
-    label: "THE COMEBACK",
-    title: "SO HE STARTED RAPPING FOR RENT.",
-    copy: "The kingdom is still gone, but he found a microphone. Every stream is now technically part of the Babylon reconstruction fund.",
-    quote: "ONE MORE 100X AND I GET THE PALACE BACK.",
-  },
-];
+const headlines = [
+  ["I'M NOT WRONG.", "I'M EARLY.", "very fucking early"],
+  ["TAKE PROFITS?", "TAKE WHAT?", ""],
+  ["WE JUST GOT HERE.", "", "it has been nine months"],
+  ["MY WEALTH IS RESTING.", "", ""],
+  ["TIME IS FUD.", "", ""],
+  ["THE PALACE IS UNDER RENOVATION.", "", "indefinitely"],
+  ["SEVEN YEARS.", "GIVE OR TAKE SEVEN YEARS.", ""],
+] as const;
 
 export default function NebuExperience({ initialData }: { initialData: SiteData }) {
   const broadcast = initialData.featuredBroadcast;
   const audio = useRef<HTMLAudioElement | null>(null);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [videoFailed, setVideoFailed] = useState(false);
 
   const videoReady = Boolean(broadcast.videoUrl) && !videoFailed;
   const audioReady = Boolean(broadcast.audioUrl);
-  const fallbackImage = broadcast.imageUrl || broadcast.posterUrl || initialData.characterUrl || "/nebu-fallen-king.webp";
-  const videoPoster = broadcast.posterUrl || broadcast.imageUrl || initialData.characterUrl || "/nebu-fallen-king.webp";
+  const art = broadcast.imageUrl || broadcast.posterUrl || initialData.characterUrl || "/nebu-fallen-king.webp";
+  const poster = broadcast.posterUrl || broadcast.imageUrl || initialData.characterUrl || "/nebu-fallen-king.webp";
+  const currentHeadline = headlines[headlineIndex];
 
-  useEffect(() => {
-    setVideoFailed(false);
-  }, [broadcast.videoUrl]);
+  useEffect(() => setVideoFailed(false), [broadcast.videoUrl]);
 
   useEffect(() => {
     const player = audio.current;
     if (!player) return;
-
     const sync = () => setProgress(player.duration ? player.currentTime / player.duration : 0);
     const stop = () => setPlaying(false);
     player.addEventListener("timeupdate", sync);
     player.addEventListener("ended", stop);
     player.addEventListener("pause", stop);
-
     return () => {
       player.removeEventListener("timeupdate", sync);
       player.removeEventListener("ended", stop);
@@ -84,7 +48,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   async function togglePlayback() {
     const player = audio.current;
     if (!player || !audioReady) return;
-
     if (player.paused) {
       try {
         await player.play();
@@ -97,195 +60,138 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     }
   }
 
-  const mode = videoReady ? "MUSIC VIDEO" : audioReady ? "AUDIO DROP" : "COVER ART";
+  const headlineClass = useMemo(() => currentHeadline[1] ? "headline split" : "headline", [currentHeadline]);
 
   return (
-    <main className="kingdom-shell">
-      <header className="kingdom-nav">
-        <a className="kingdom-brand" href="#top" aria-label="NEBUCHADREKTZAR home">
-          <span className="brand-face"><img src="/nebu-fallen-king.webp" alt="" aria-hidden="true" /></span>
-          <span className="brand-type"><b>NEBUCHADREKTZAR</b><small>$N4X33</small></span>
-        </a>
-
-        <nav aria-label="Main navigation">
-          <a href="#track">THE TRACK</a>
-          <a href="#fall">THE FALL</a>
-          <a href="#coin">THE COIN</a>
-        </nav>
-
-        <a className="salad-button" href="#coin">BUY THE KING A SALAD</a>
+    <main className="site">
+      <header className="topbar">
+        <div className="wrap topbarInner">
+          <a className="brand" href="#top" aria-label="NEBUCHADREKTZAR home">
+            <span className="brandMark"><img src="/nebu-fallen-king.webp" alt="" aria-hidden="true" /></span>
+            <span className="brandName">NEBUCHADREKTZAR</span>
+            <span className="brandTicker">$N4X33</span>
+          </a>
+          <div className="kingdomStatus"><span className="heartbeat" />KINGDOM ONLINE</div>
+          <nav className="nav" aria-label="Main navigation">
+            <a href="#record">record</a>
+            <a href="#pulse">pulse</a>
+            <a href="#token">token</a>
+          </nav>
+        </div>
       </header>
 
-      <div className="rekt-ticker" aria-label="Current kingdom status">
-        <div className="ticker-run">
-          <span>👑 KINGDOM: <b>LIQUIDATED</b></span>
-          <span>💸 ROYAL TREASURY: <b>$0.43</b></span>
-          <span>🌱 CURRENT DIET: <b>GRASS</b></span>
-          <span>📉 LEVERAGE USED: <b>TOO MUCH</b></span>
-          <span>🧠 SANITY: <b>PENDING</b></span>
-          <span>🎤 NEW CAREER: <b>DEGEN RAPPER</b></span>
-          <span>👑 KINGDOM: <b>LIQUIDATED</b></span>
-          <span>💸 ROYAL TREASURY: <b>$0.43</b></span>
-          <span>🌱 CURRENT DIET: <b>GRASS</b></span>
-          <span>📉 LEVERAGE USED: <b>TOO MUCH</b></span>
-          <span>🧠 SANITY: <b>PENDING</b></span>
-          <span>🎤 NEW CAREER: <b>DEGEN RAPPER</b></span>
-        </div>
-      </div>
-
-      <section id="top" className="meme-hero">
-        <div className="stars" aria-hidden="true">
-          {Array.from({ length: 22 }).map((_, i) => <i key={i} />)}
-        </div>
-        <div className="moon" aria-hidden="true"><span>↘</span></div>
-        <div className="ruins ruins-back" aria-hidden="true" />
-        <div className="grass-line" aria-hidden="true" />
-
-        <div className="hero-copy-block">
-          <div className="incident-sticker">⚠ DANIEL 4:33 // DEGEN KINGDOM INCIDENT</div>
-          <p className="name-line">NEBUCHADREKTZAR</p>
-          <h1>KING OF<br />BABYLON. <em>NOW REKT.</em></h1>
-          <p className="hero-punchline">{initialData.heroCopy}</p>
-
-          <div className="hero-actions">
-            <a className="comic-btn primary" href="#track">▶ HEAR HIS NEW TRACK</a>
-            <a className="comic-btn light" href="#fall">HOW DID THIS HAPPEN?</a>
+      <section id="top" className="wrap hero">
+        <div className="copy">
+          <div className="eyebrow">royal transmission // still early</div>
+          <button
+            className="headlineButton"
+            type="button"
+            onClick={() => setHeadlineIndex((headlineIndex + 1) % headlines.length)}
+            aria-label="Show another NEBU headline"
+          >
+            <h1 className={headlineClass}>
+              {currentHeadline[0]}
+              {currentHeadline[1] && <><br /><span className="acid">{currentHeadline[1]}</span></>}
+            </h1>
+            <div className="subline">{currentHeadline[2]}</div>
+          </button>
+          <p className="signature"><strong>I don&apos;t have a job.</strong> I have a rap career and a thesis.</p>
+          <div className="ctaRow">
+            <a className="cta primary" href="#record">▶ play my new one</a>
+            <a className="cta gold" href="#token">buy the token</a>
           </div>
-
-          <div className="status-stickers">
-            <span className="red">KINGDOM: GONE</span>
-            <span className="green">STATE: {initialData.status.toUpperCase()}</span>
-            <span className="cream">TICKER: $N4X33</span>
-          </div>
+          <div className="credential">KING · RAPPER · FORMERLY EXTREMELY LIQUID</div>
         </div>
 
-        <div className="king-stage">
-          <div className="speech-bubble">
-            <strong>“ONE MORE 100X<br />AND I GET THE PALACE BACK.”</strong>
-            <small>— last recorded words before another bad entry</small>
-          </div>
-
-          <div className="portrait-card">
-            <div className="credit-sticker">ROYAL CREDIT SCORE: COOKED</div>
-            <img src={initialData.characterUrl || "/nebu-fallen-king.webp"} alt="NEBUCHADREKTZAR, the fallen king turned degen rapper" />
-            <div className="rapper-sticker">NEW CAREER:<br /><b>DEGEN RAPPER</b></div>
+        <div className="heroArt">
+          <div className="portraitShell">
+            <div className="portraitMeta">NEBU // FIELD RECORD // 7Y LOCKUP</div>
+            <div className="coin coin1">$</div><div className="coin coin2">$</div><div className="coin coin3">$</div>
+            <div className="ruin ruin1" /><div className="ruin ruin2" /><div className="ruin ruin3" />
+            <img className="kingImage" src={initialData.characterUrl || "/nebu-fallen-king.webp"} alt="NEBUCHADREKTZAR fallen king" />
+            <div className="grassField" aria-hidden="true" />
+            <div className="portraitQuote">“The palace is under renovation.”</div>
           </div>
         </div>
       </section>
 
-      <section id="track" className="royal-records">
-        <div className="records-copy">
-          <span className="section-tag">🎤 ROYAL RECORDS PRESENTS</span>
-          <h2>THE KING<br />NEEDED A <em>JOB.</em></h2>
-          <p>After losing an entire kingdom, normal employment was apparently “beneath the crown.” So he bought a microphone and started dropping degen records from the ruins.</p>
-
-          <div className="career-card">
-            <span>FORMER OCCUPATION</span><b>KING OF BABYLON</b>
-            <span>CURRENT OCCUPATION</span><b>RAPPER / GRASS ENTHUSIAST</b>
-            <span>CAREER OBJECTIVE</span><b>BUY THE PALACE BACK</b>
-          </div>
-        </div>
-
-        <div className="track-player">
-          <div className="player-topline">
-            <span>NEW DROP // {broadcast.subtitle}</span>
-            <b>{mode}</b>
-          </div>
-
-          <div className="track-screen">
-            {videoReady ? (
-              <video
-                key={broadcast.videoUrl}
-                src={broadcast.videoUrl}
-                poster={videoPoster}
-                controls
-                playsInline
-                preload="metadata"
-                onError={() => setVideoFailed(true)}
-              >
-                Your browser does not support video playback.
-              </video>
-            ) : (
-              <img src={fallbackImage} alt={`${broadcast.title} cover artwork`} />
-            )}
-            <span className="on-air">● ROYAL RECORDS</span>
-          </div>
-
-          <div className="track-bottom">
-            <div className="track-name">
-              <small>NEBUCHADREKTZAR // SINGLE</small>
-              <strong>{broadcast.title}</strong>
+      <section id="record" className="section">
+        <div className="wrap">
+          <div className="sectionKicker">current masterpiece</div>
+          <h2 className="sectionTitle">I made another one.<br /><span className="acid">You&apos;re welcome.</span></h2>
+          <div className="recordGrid">
+            <div className="coverWrap">
+              <div className={`cover ${playing ? "isPlaying" : ""}`}>
+                <div className="coverTag">RECORD 001</div>
+                <div className="vinylRing" />
+                {videoReady ? (
+                  <video src={broadcast.videoUrl} poster={poster} controls playsInline preload="metadata" onError={() => setVideoFailed(true)} />
+                ) : (
+                  <img src={art} alt={`${broadcast.title} artwork`} />
+                )}
+                <div className="coverShade" />
+                <div className="coverTitle">{broadcast.title || "HE SAID SOON"}</div>
+              </div>
             </div>
 
-            {!videoReady && (
-              <div className="fallback-player">
-                <button type="button" onClick={togglePlayback} disabled={!audioReady} aria-label={playing ? "Pause track" : "Play track"}>
-                  {audioReady ? (playing ? "Ⅱ" : "▶") : "—"}
-                </button>
-                <div className="track-progress">
-                  <div><i style={{ width: `${Math.round(progress * 100)}%` }} /></div>
-                  <small>{audioReady ? (playing ? "KING IS RAPPING..." : "PLAY THE TRACK") : "DROP COMING SOON"}</small>
+            <div className="recordCopy">
+              <h3>I wrote this about a man in a rented Lamborghini.</h3>
+              <p>He knows what he did. I would say more but I am a professional.</p>
+              {!videoReady && (
+                <div className="playerRow">
+                  <button className="play" type="button" onClick={togglePlayback} disabled={!audioReady} aria-label={playing ? "Pause" : "Play"}>{audioReady ? (playing ? "Ⅱ" : "▶") : "—"}</button>
+                  <div className="trackMeta">
+                    <small>{broadcast.subtitle || "now transmitting"}</small>
+                    <strong>{broadcast.title || "HE SAID SOON"} — NEBUCHADREKTZAR</strong>
+                    <div className="bar"><i style={{ width: `${Math.round(progress * 100)}%` }} /></div>
+                  </div>
+                  <div className="duration">{audioReady ? (playing ? "LIVE" : "READY") : "SOON"}</div>
+                  {audioReady && <audio ref={audio} src={broadcast.audioUrl} preload="metadata" />}
                 </div>
-                {audioReady && <audio ref={audio} src={broadcast.audioUrl} preload="metadata" />}
-              </div>
-            )}
-          </div>
-
-          <p className="player-joke">STREAMING REVENUE CURRENTLY BEING USED TO REBUILD THE EAST WING.</p>
-        </div>
-      </section>
-
-      <section id="fall" className="fall-section">
-        <div className="fall-heading">
-          <span>UNOFFICIAL TRENCHES TRANSLATION</span>
-          <h2>HOW TO LOSE A KINGDOM<br />IN <em>SIX EASY STEPS.</em></h2>
-          <p>Scholars may dispute the financial details. The liquidation definitely feels canon.</p>
-        </div>
-
-        <div className="story-grid">
-          {fallStory.map((item, index) => (
-            <article className={`story-panel p${index + 1}`} key={item.number}>
-              <div className="story-number">{item.number}</div>
-              <small>{item.label}</small>
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
-              <blockquote>{item.quote}</blockquote>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="prophecy-section">
-        <div className="prophecy-card">
-          <span>DANIEL 4:33</span>
-          <h2>THE ORIGINAL STORY SAID HE ENDED UP EATING GRASS.</h2>
-          <p>Our completely unofficial degen footnote is simply that leverage probably would have got him there faster.</p>
-          <div className="prophecy-note">NOT A BIBLE TRANSLATION. VERY MUCH A MEME.</div>
-        </div>
-        <div className="grass-king" aria-hidden="true">🌱 👑 🌱</div>
-      </section>
-
-      <section id="coin" className="coin-section">
-        <div>
-          <span className="section-tag">THE ASSET HE SHOULD NOT BE ALLOWED TO MANAGE</span>
-          <h2>$N4X33</h2>
-          <p>Named after the chapter that ended the royal bull run. Absolutely no guarantee the king has learned anything.</p>
-        </div>
-
-        <div className="contract-card">
-          <small>ROYAL CONTRACT</small>
-          <code>{initialData.contractAddress || "CONTRACT NOT YET PROCLAIMED"}</code>
-          <div className="coin-links">
-            {initialData.socials.x && <a href={initialData.socials.x} target="_blank" rel="noreferrer">X / TRENCHES</a>}
-            {initialData.socials.telegram && <a href={initialData.socials.telegram} target="_blank" rel="noreferrer">TELEGRAM</a>}
+              )}
+              <div className="smallTalk">You look financially exhausted. This will help.</div>
+              <div className="olderWorks"><small>older masterpieces</small><p>Don&apos;t Sell Yet · recorded during a 40% day, my best work<br /><br />Grass Fed · about dinner. dinner is going well<br /><br />Have You Forgotten · for the ones who left. no hard feelings, I wrote your name down</p></div>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="meme-footer">
-        <div><b>NEBUCHADREKTZAR</b><span>$N4X33 // DANIEL 4:33</span></div>
-        <p>NOT FINANCIAL ADVICE. HE LOST A KINGDOM.</p>
-      </footer>
+      <section id="pulse" className="section pulseSection">
+        <div className="wrap">
+          <div className="sectionKicker">kingdom pulse</div>
+          <div className="pulseGrid">
+            <div className="pulseIntro">
+              <h2 className="sectionTitle">I see<br />every one.</h2>
+              <p>I am awake. I am always awake.</p>
+              <div className="credential">LIVE REACTIONS USE THE 68-LINE PULSE BANK</div>
+            </div>
+            <NebuPulse />
+          </div>
+        </div>
+      </section>
+
+      <section id="token" className="section tokenSection">
+        <div className="wrap tokenGrid">
+          <div>
+            <div className="sectionKicker">handler note // do not show him</div>
+            <h2 className="tokenHead">Buy the token.<br />Support<br /><span>the arts.</span></h2>
+            <div className="handlerCard">The artist lost everything.<small>May also be purchased by successful traders. We do not discriminate against temporary wealth.</small></div>
+            <div className="handlerNote">HE HAS NOT SEEN THIS SECTION AND IT IS GOING TO STAY THAT WAY.</div>
+            <div className="truth">Sometimes we get rekt. Sometimes we print. <span>Somehow we always come back.</span></div>
+          </div>
+          <div className="tokenPanel">
+            <p>I have expenses. Nobody asks about my expenses.</p>
+            <div className="ca">{initialData.contractAddress || "N4X33xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}</div>
+            <div className="ctaRow tokenActions">
+              <button className="cta gold" type="button" onClick={() => initialData.contractAddress && navigator.clipboard?.writeText(initialData.contractAddress)}>copy address</button>
+              <a className="cta" href={initialData.socials.x || "#"}>chart</a>
+            </div>
+            <p className="tokenFine">If you are asking when: seven years. Give or take seven years.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer><div className="wrap footFlex"><span>NEBUCHADREKTZAR // $N4X33</span><span>TIME IS FUD.</span></div></footer>
     </main>
   );
 }
