@@ -77,7 +77,7 @@ export function normalizeSiteData(value: unknown): SiteData {
     eyebrow: cleanString(input.eyebrow, defaultSiteData.eyebrow, 100),
     heroTitle: cleanString(input.heroTitle, defaultSiteData.heroTitle, 140),
     heroCopy: cleanString(input.heroCopy, defaultSiteData.heroCopy, 300),
-    characterUrl: cleanString(input.characterUrl, defaultSiteData.characterUrl, 1000),
+    characterUrl: cleanString(input.characterUrl, defaultSiteData.characterUrl, 1000) || defaultSiteData.characterUrl,
     contractAddress: cleanString(input.contractAddress, defaultSiteData.contractAddress, 200),
     featuredBroadcast: {
       title: cleanString(featured.title, defaultSiteData.featuredBroadcast.title, 120),
