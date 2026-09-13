@@ -27,7 +27,7 @@ export const defaultSiteData: SiteData = {
   eyebrow: "DANIEL 4:33 // ROYAL SYSTEM FAILURE",
   heroTitle: "THE KING HAS LEFT THE PALACE.",
   heroCopy: "He looked at the charts. The charts looked back. Now he eats grass.",
-  characterUrl: "",
+  characterUrl: "/nebu-fallen-king.webp",
   contractAddress: "",
   featuredBroadcast: {
     title: "THE BOOK OF REKT",
