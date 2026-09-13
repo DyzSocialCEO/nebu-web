@@ -1,50 +1,20 @@
-# NEBUCHADREKTZAR — public web
+# NEBUCHADREKTZAR · $N4X33
 
-Public character + motion/music experience for **NEBUCHADREKTZAR ($N4X33)**.
+Read [NEBU-MASTER.md](NEBU-MASTER.md) to recover the project and [RELEASE.md](RELEASE.md) for release status.
 
-## Runtime
+Next.js/React public character and music world. `npm ci`, `npm run build`, `npm start`.
 
-- Next.js 16.3.3 / React 19.3
-- Railway service: `nebu-web`
-- Persistent content data: `${DATA_DIR}/site.json` (Railway volume mounted at `/data`)
-- Admin mutations require `ADMIN_API_KEY` via `x-nebu-admin-key`
-- Heavy media is expected to be served from Bunny `NEBUFILES` URLs stored in site data.
+## Content
+- `GET /api/site`: public data.
+- `GET/PUT /api/admin/site`: protected with server-side `ADMIN_API_KEY` via `x-nebu-admin-key`.
+- JSON persists at `${DATA_DIR}/site.json`; Railway mounts `/data`.
+- `featuredBroadcast`: title, subtitle, videoUrl, posterUrl, imageUrl, audioUrl.
+- Video first; missing or failed video falls back to artwork plus audio. No URLs means an intentional waiting state.
+- Optional `tracks`: `{ id, title, audioUrl }[]` for playable older releases. Existing `lore` stays compatible but is not shown publicly.
+- Media hosted on Bunny NEBUFILES. Signed playback URLs are not yet implemented. Never put storage credentials in content.
+- Full 68-line Pulse Bank is preserved; real chain adapter is pending.
 
-## Featured broadcast
-
-The homepage is **video-first**.
-
-```ts
-featuredBroadcast: {
-  title: string;
-  subtitle: string;
-  videoUrl: string;
-  posterUrl: string;
-  imageUrl: string;
-  audioUrl: string;
-}
-```
-
-Rendering priority:
-
-1. `videoUrl` — responsive HTML5 motion/video broadcast with native controls and `playsInline`.
-2. If video is missing or fails to load, use `imageUrl`/`posterUrl`/`characterUrl` plus `audioUrl`.
-3. If audio is absent, keep a clean visual-only hero instead of a broken player.
-
-Legacy stored `currentTrack` data is read automatically as the new broadcast, so an existing track title/subtitle/audio survives the migration.
-
-## Environment
-
-```bash
-PORT=3000
-DATA_DIR=/data
-ADMIN_API_KEY=change-me
-```
-
-## Content API
-
-- `GET /api/site` — public site data
-- `GET /api/admin/site` — protected full data
-- `PUT /api/admin/site` — protected update
-
-The web experience deliberately avoids a generic meme-token template. The character, lore and featured broadcast are one Daniel 4:33 experience.
+## Identity assets
+`nebu-approved.webp` is the exact supplied illustration, re-encoded as WebP.
+`nebu-world.webp` is the identity-preserving night-world derivative. `nebu-avatar.webp` is the matching face logo.
+The historical `nebu-fallen-king.webp` remains for compatibility.

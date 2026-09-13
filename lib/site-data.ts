@@ -19,6 +19,7 @@ export type SiteData = {
   contractAddress: string;
   featuredBroadcast: FeaturedBroadcast;
   lore: Array<{ code: string; title: string; copy: string }>;
+  tracks: Array<{ id: string; title: string; audioUrl: string }>;
   socials: { x: string; telegram: string };
 };
 
@@ -42,6 +43,7 @@ export const defaultSiteData: SiteData = {
     { code: "02 / DINNER", title: "GRASS FED", copy: "A song about dinner. Dinner is going well. Please stop asking." },
     { code: "03 / ARCHIVE", title: "HAVE YOU FORGOTTEN", copy: "For the ones who left. No hard feelings. I wrote your name down." },
   ],
+  tracks: [],
   socials: { x: "", telegram: "" },
 };
 
@@ -50,6 +52,11 @@ const dataFile = path.join(dataDir, "site.json");
 
 function cleanString(value: unknown, fallback: string, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : fallback;
+}
+
+function safeLink(value: unknown): string {
+  const link = cleanString(value, "", 1000);
+  return /^https:\/\//i.test(link) ? link : "";
 }
 
 export function normalizeSiteData(value: unknown): SiteData {
@@ -88,9 +95,16 @@ export function normalizeSiteData(value: unknown): SiteData {
       audioUrl: cleanString(featured.audioUrl, defaultSiteData.featuredBroadcast.audioUrl, 1000),
     },
     lore: lore.length ? lore : defaultSiteData.lore,
+    tracks: Array.isArray(input.tracks) ? input.tracks.slice(0, 20).flatMap((item, i) => {
+      if (!item || typeof item !== "object") return [];
+      const track = item as Record<string, unknown>;
+      const audioUrl = cleanString(track.audioUrl, "", 1000);
+      if (!audioUrl || !/^(https?:\/\/|\/(?!\/))/.test(audioUrl)) return [];
+      return [{ id: cleanString(track.id, `track-${i}`, 80), title: cleanString(track.title, "another masterpiece", 120), audioUrl }];
+    }) : [],
     socials: {
-      x: cleanString(socials.x, defaultSiteData.socials.x, 1000),
-      telegram: cleanString(socials.telegram, defaultSiteData.socials.telegram, 1000),
+      x: safeLink(socials.x),
+      telegram: safeLink(socials.telegram),
     },
   };
 }

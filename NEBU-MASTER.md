@@ -1,144 +1,53 @@
-# NEBUCHADREKTZAR — MASTER
+# NEBUCHADREKTZAR — START HERE
 
-This file is the canonical project truth. If a chat/workspace loses context, read this first and continue from **CURRENT BUILD STATE / NEXT STEP**.
+Canonical recovery document. Repository: `DyzSocialCEO/nebu-web`. Do not inspect unrelated projects to recover NEBU context.
 
-## 1. Product
+## Approved identity
+NEBUCHADREKTZAR ($N4X33). The character IS the meme and the brand.
+The exact user-approved man is preserved in `public/nebu-approved.webp`: tired half-closed eyes, brown skin, architectural gold crown, gold/black headphones, tightly curled black beard, grass in mouth, maroon robe, ripped trousers, sneakers, microphone, broken throne.
+Every new pose must be this same man. No substitute mascot, generic king, alternate face, or separate symbol logo. The head/avatar is the token logo.
+`public/nebu-world.webp` places that character in the nighttime ruined garden. `public/nebu-avatar.webp` is the matching head mark.
 
-**NEBUCHADREKTZAR ($N4X33)** is a responsive web experience that works across desktop, tablet and mobile. There is not a separate mobile app at this stage.
+## Four laws
+1. First person, always.
+2. Never wrong, only early.
+3. Never broke, only illiquid.
+4. Every song is generational.
+Only the management note uses third person; NEBU contradicts it.
+Never explain the Bible reference on the public page. No Daniel citation, historical exposition, or explanatory lore section.
 
-NEBU is not a mascot sitting on top of a normal crypto website. **NEBU is the interface.** The visitor enters his world. He talks before anybody explains him. His music, market reactions, token and system messages all happen around his personality.
+## Approved experience
+A weird personal internet shrine / living meme world. The king is already there and already talking.
+- Full-scene illustration, dark purple, dirty gold, restrained acid green.
+- No corporate navbar, SaaS cards, analytics grids, giant headline beside a mascot, or conventional Music/Pulse/Token sections.
+- Thoughts appear around NEBU. Tap his character or words for another thought. Automatic rotation respects reduced motion.
+- Music is a physical record in his world. Tap to open the player.
+- Token is a small crooked management note: “buy the token. support the arts.” Contract copy and chart appear only when a contract is configured.
+- Never cover his face. Desktop and mobile keep the same man and same joke.
 
-Do not build a normal corporate crypto landing page. Do not build a childish meme-template either. The target is **premium absurdity**: expensive art direction, strong character, weird confidence, dry/unhinged humor, beautiful composition.
+## Current implementation
+The immersive world replaces the previous sectional homepage. Full 68-line Pulse Bank and classification engine have been recovered from `nebu-pulse`.
+Featured media remains video-first with controls/playsInline, then artwork + audio on missing/failed video. No automatic sound. No media produces an intentional waiting state. Closing the player stops all media; only one media element plays at a time.
+The existing `featuredBroadcast` schema, `currentTrack` migration, protected admin API, and persistent JSON remain. Optional `tracks` supplies a real playable archive; old `lore` remains stored for compatibility but is never presented as fake songs or biblical exposition.
+Old stored hero/eyebrow/lore text is deliberately not rendered. Never reset persisted media or contract data to fix presentation copy.
 
-## 2. The four laws
+## Pulse
+`PULSE_BANK.md` and `lib/pulse-bank.ts` contain all 68 canonical lines. `lib/pulse-engine.ts` classifies provider signals and avoids immediate repetition.
+No chain adapter is connected. Public UI truthfully says CHAIN FEED · NOT CONNECTED; do not invent trades, balances, or price moves. Ordinary rotating thoughts are character dialogue, not market events.
+When wiring real data, use `PULSE_ARCHITECTURE.md` and render temporary reactions around him rather than rebuilding a dashboard. Confirm actual chain/pair and threshold quote unit before connecting trades.
 
-1. **First person, always.** NEBU speaks for himself.
-2. **Never wrong, only early.** He cannot admit a bad call.
-3. **Never broke, only illiquid.** His dignity survives every financial fact.
-4. **Every song is generational.** He considers his own music historically important.
+## Deployment
+User explicitly authorized building and deploying this website in the current session.
+Railway project NEBUCHADREKTZAR: `a3d7396f-55ea-4c87-8454-ddc6bd323b2f`.
+Public service: `348ebe10-9b66-4a28-86b7-f8cd8ebc7d35`.
+Production environment: `3dce1d8f-2258-4132-93f4-acc62cc7d082`.
+Existing source branch: `meme-kingdom-direct-build`. Domain: `https://nebu-web-production.up.railway.app`.
+Persistent volume: `/data`, `DATA_DIR` content JSON. Do not discard it.
+Admin API key remains server-side. Heavy media uses Bunny NEBUFILES URLs; no secrets in browser.
 
-Only the handlers/fundraising note may deliberately use third person because the joke is that somebody else added it behind his back.
+## Remaining external inputs
+At recovery, live public data contained no song/video URL, contract address, or socials. Do not claim music or token trading is available until configured.
+Supply real Bunny media URLs through existing admin controls. Real token feed and signed Bunny playback endpoint are future integration work; neither is implemented by merely displaying media URLs.
 
-## 3. Critical narrative rule
-
-**Nothing on the public page explains the Nebuchadnezzar/Bible joke.**
-
-Do not write Daniel 4:33, King of Babylon, biblical exposition, “fallen king explained,” or a lore section that tells users the reference. Users should discover the resemblance themselves through the character: former king, lost wealth, grass, absurd pride, exile energy, recovery delusion.
-
-The older `NEBUCHADREKTZAR_Meme_Kingdom_Concept.html` is useful only as visual history. Its explicit biblical copy is superseded.
-
-## 4. Voice
-
-Approved examples:
-
-- `I'M NOT WRONG. I'M EARLY.` / `very fucking early`
-- `TAKE PROFITS? TAKE WHAT?`
-- `MY WEALTH IS RESTING.`
-- `WE JUST GOT HERE.` / `it has been nine months`
-- `TIME IS FUD.`
-- `THE PALACE IS UNDER RENOVATION.` / `indefinitely`
-- `I don't have a job. I have a rap career and a thesis.`
-- `King. Rapper. Formerly extremely liquid.`
-- `I MADE ANOTHER ONE.` / `you're welcome`
-- `I SEE EVERY ONE.` / `I am awake. I am always awake.`
-- `you sold. that is a timing problem, not a me problem`
-- `somebody with money has entered the garden`
-- `told you`
-- `normal. healthy. deeply normal`
-- `I have expenses. Nobody asks about my expenses.`
-
-System behavior rule: **every line can be him.** Loading, errors, copy confirmations, empty media states and live-event reactions should all preserve the character where practical.
-
-## 5. Public experience
-
-### Front door
-
-The king is already talking. Character is dominant. Full visual presence with grass / ruined-royalty atmosphere. Nothing should cover or diminish his face.
-
-Rotating/clickable delusional headline. Immediate music CTA. Character credential line. The interface should feel alive, not like an About page.
-
-### Music
-
-**The music is the product.**
-
-Current release is treated like an object in NEBU's world, not an embedded generic Spotify card. Album art / video / audio can be supplied through Bunny `NEBUFILES`. Older tracks sit beneath as “older masterpieces.”
-
-### Kingdom Pulse
-
-NEBU reacts to market/token activity. This must never become a sterile analytics dashboard. Events are translated into his voice. Until the real feed is wired, any simulated feed must be clearly identified as simulated/demo in-character.
-
-### Token
-
-The token is secondary to the character and music. Fundraising is presented like his handlers quietly inserted it:
-
-`BUY THE TOKEN. SUPPORT THE ARTS.`
-
-`The artist lost everything.`
-
-NEBU may interrupt with: `I have expenses. Nobody asks about my expenses.`
-
-Contract copy/chart controls live here once the token exists.
-
-## 6. Visual rules
-
-- Premium dark world: near-black / deep purple, dirty gold, acid green accents.
-- Character-first; NEBU art dominates key screens.
-- Funny because of writing, delusion, reactions and props — **not** because the page is covered in childish emojis, rainbow colors or random meme stickers.
-- Avoid SaaS cards, corporate metrics grids, generic Web3 gradients and giant “BUY NOW” token-page behavior.
-- Avoid over-serious museum/diagnostic copy. NEBU should feel alive and stupidly confident.
-- Desktop should feel cinematic and spacious.
-- Mobile must retain the same joke and hierarchy; it is not a stripped-down afterthought.
-- Respect `prefers-reduced-motion`.
-
-## 7. Saved references
-
-Library files known to exist:
-
-- `The Fallen Bullish Crypto King.png` — preferred core NEBU identity/look.
-- `Nebuchadrektzar: Fallen King Character Sheet.png` — consistency reference for face/clothes/character.
-- `Fallen King Drops a Verse.png` — supporting NEBU image.
-- `nebu-voice-mockup-2.html` / duplicate `(1)` — strongest voice/rule reference.
-- `nebu-responsive-mockup-v3.html` — responsive/interaction reference, but its conventional section grammar is not final.
-- `NEBUCHADREKTZAR_Meme_Kingdom_Concept.html` — early visual history only; explicit biblical explanation is rejected.
-
-## 8. Infrastructure
-
-GitHub:
-- `DyzSocialCEO/nebu-web`
-- `DyzSocialCEO/nebu-admin`
-
-Railway project:
-- `NEBUCHADREKTZAR`
-- services: `nebu-web`, `nebu-admin`
-- public web service has persistent `/data` volume
-
-Storage:
-- Bunny storage zone/asset setup named **NEBUFILES**
-
-Public app uses persisted site JSON under `DATA_DIR` and protected admin API. Admin/browser must never receive the server-side admin API key.
-
-## 9. CURRENT BUILD STATE
-
-Public `nebu-web` has been rewritten to the character-first direction:
-
-- responsive desktop + mobile UI
-- rotating NEBU thoughts
-- dominant character stage
-- music/featured release object with audio support
-- older-masterpieces archive sourced from editable site data
-- clearly labeled simulated Kingdom Pulse reactions
-- handler-style token area and copy-address behavior
-- social links from editable data
-- explicit Bible/diagnostic presentation removed from the public interface
-- default content updated to the four-law voice
-
-**This code is committed but not deployed by ChatGPT.** Do not deploy without explicit user instruction.
-
-## 10. NEXT STEP
-
-1. Visually QA the actual build with the real NEBU character asset on desktop and mobile.
-2. Refine only visual/humor issues that materially improve the character experience — avoid endless redesign loops.
-3. Align `nebu-admin` fields/copy with the final public model and Bunny NEBUFILES media workflow.
-4. Wire real Bunny media URLs.
-5. Later: wire real Kingdom Pulse/token activity feed.
-6. Only after QA: deploy to Railway, then place Cloudflare in front as planned.
+## Resume rule
+Read this file, inspect git HEAD and deployed commit, then inspect actual code. Older draft PRs are historical alternatives, not instructions to revert this release. Check `RELEASE.md` for verification and deployment outcome.

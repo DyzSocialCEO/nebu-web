@@ -1,217 +1,149 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "@/lib/site-data";
 
-const headlineDeck = [
-  ["I'M NOT WRONG.", "I'M EARLY.", "very fucking early"],
-  ["TAKE PROFITS?", "TAKE WHAT?", "I have principles"],
-  ["MY WEALTH", "IS RESTING.", "do not disturb it"],
-  ["WE JUST", "GOT HERE.", "it has been nine months"],
-  ["TIME IS", "FUD.", "look it up"],
-  ["THE PALACE IS", "UNDER RENOVATION.", "indefinitely"],
-  ["I HAVE A", "RAP CAREER.", "please respect the arts"],
+const thoughts = [
+  ["i’m not wrong.", "i’m early.", "very fucking early."],
+  ["my wealth", "is resting.", "do not disturb it."],
+  ["take profits?", "take what?", "i have principles."],
+  ["we just", "got here.", "it has been nine months."],
+  ["the palace is", "under renovation.", "indefinitely."],
+  ["i have a", "rap career.", "please respect the arts."],
+  ["time", "is fud.", "look it up."],
 ];
 
-const pulseLines = [
-  { tag: "quiet", text: "nothing is happening. that is usually when everything is happening" },
-  { tag: "+0.8 SOL", text: "good. you are early. I am not going to say it twice" },
-  { tag: "-1.2 SOL", text: "you sold. that is a timing problem, not a me problem" },
-  { tag: "+0.2 SOL", text: "tiny. but spiritually important" },
-  { tag: "green", text: "told you" },
-  { tag: "red", text: "normal. healthy. deeply normal" },
-  { tag: "whale", text: "somebody with money has entered the garden" },
-];
+function PlayIcon({ pause = false }: { pause?: boolean }) {
+  return pause ? <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg> : <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m7 3 15 9-15 9z" /></svg>;
+}
 
 export default function NebuExperience({ initialData }: { initialData: SiteData }) {
   const broadcast = initialData.featuredBroadcast;
-  const audio = useRef<HTMLAudioElement | null>(null);
+  const [thought, setThought] = useState(0);
+  const [recordOpen, setRecordOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [headlineIndex, setHeadlineIndex] = useState(0);
-  const [pulseIndex, setPulseIndex] = useState(0);
-  const [copied, setCopied] = useState(false);
-
-  const artwork = broadcast.imageUrl || broadcast.posterUrl || initialData.characterUrl;
-  const activeHeadline = headlineDeck[headlineIndex];
-  const visiblePulse = useMemo(() => {
-    return Array.from({ length: 4 }, (_, offset) => pulseLines[(pulseIndex + offset) % pulseLines.length]);
-  }, [pulseIndex]);
+  const [duration, setDuration] = useState(0);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [mediaError, setMediaError] = useState(false);
+  const [copyState, setCopyState] = useState("");
+  const dialog = useRef<HTMLDialogElement>(null);
+  const player = useRef<HTMLAudioElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const nextThought = () => setThought(value => (value + 1) % thoughts.length);
+  const canVideo = Boolean(broadcast.videoUrl) && !videoFailed;
+  const canAudio = Boolean(broadcast.audioUrl);
+  const hasMedia = canVideo || canAudio;
+  const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-approved.webp";
 
   useEffect(() => {
-    const timer = window.setInterval(() => setPulseIndex((value) => (value + 1) % pulseLines.length), 4300);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setThought(value => (value + 1) % thoughts.length), 16000);
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const player = audio.current;
-    if (!player) return;
-    const sync = () => setProgress(player.duration ? player.currentTime / player.duration : 0);
-    const stop = () => setPlaying(false);
-    player.addEventListener("timeupdate", sync);
-    player.addEventListener("ended", stop);
-    player.addEventListener("pause", stop);
-    return () => {
-      player.removeEventListener("timeupdate", sync);
-      player.removeEventListener("ended", stop);
-      player.removeEventListener("pause", stop);
-    };
-  }, [broadcast.audioUrl]);
-
-  async function togglePlayback() {
-    const player = audio.current;
-    if (!player || !broadcast.audioUrl) return;
-    if (player.paused) {
-      try {
-        await player.play();
-        setPlaying(true);
-      } catch {
-        setPlaying(false);
-      }
-    } else {
-      player.pause();
-    }
+  function openRecord() { setRecordOpen(true); dialog.current?.showModal(); }
+  function stopMedia() {
+    dialog.current?.querySelectorAll<HTMLMediaElement>("audio, video").forEach(media => media.pause());
+    setPlaying(false);
+    setRecordOpen(false);
   }
-
+  function closeRecord() {
+    stopMedia();
+    setPlaying(false);
+    dialog.current?.close();
+  }
+  async function toggleAudio() {
+    const audio = player.current;
+    if (!audio) return;
+    if (!audio.paused) { audio.pause(); return; }
+    try { await audio.play(); setMediaError(false); } catch { setMediaError(true); }
+  }
   async function copyAddress() {
-    if (!initialData.contractAddress) return;
     try {
       await navigator.clipboard.writeText(initialData.contractAddress);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
+      setCopyState("copied. do not lose it.");
+    } catch { setCopyState("select the address below. i cannot do everything."); }
   }
 
   return (
-    <main className="kingdom">
-      <header className="topbar">
-        <a className="brand" href="#top" aria-label="NEBUCHADREKTZAR home">
-          <img src="/nebu-fallen-king.webp" alt="" aria-hidden="true" />
-          <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small></span>
+    <main className="world">
+      <div className="world-art" aria-hidden="true" />
+      <div className="world-shade" aria-hidden="true" />
+      <div className="dust" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div>
+      <header className="signature">
+        <a className="identity" href="/" aria-label="NEBUCHADREKTZAR home">
+          <span className="face-mark"><img src="/nebu-avatar.webp" alt="" /></span>
+          <span><b>NEBUCHADREKTZAR</b><small>$N4X33 <em>·</em> still early.</small></span>
         </a>
-        <div className="kingdom-status"><i /> KINGDOM ONLINE</div>
-        <nav>
-          <a href="#record">MUSIC</a>
-          <a href="#pulse">PULSE</a>
-          <a href="#support">TOKEN</a>
-        </nav>
+        <div className="socials">
+          {initialData.socials.x && <a href={initialData.socials.x} target="_blank" rel="noopener noreferrer" aria-label="NEBU on X">X ↗</a>}
+          {initialData.socials.telegram && <a href={initialData.socials.telegram} target="_blank" rel="noopener noreferrer">TELEGRAM ↗</a>}
+        </div>
       </header>
 
-      <section id="top" className="hero">
-        <div className="hero-copy">
-          <div className="eyebrow">{initialData.eyebrow}</div>
-          <button
-            className="headline-button"
-            onClick={() => setHeadlineIndex((headlineIndex + 1) % headlineDeck.length)}
-            aria-label="Show another NEBU thought"
-          >
-            <h1>{activeHeadline[0]}<br /><span>{activeHeadline[1]}</span></h1>
-            <small>{activeHeadline[2]}</small>
-          </button>
-          <p className="hero-line">{initialData.heroCopy}</p>
-          <div className="hero-actions">
-            <a className="primary-action" href="#record">▶ PLAY MY NEW ONE</a>
-            <a className="ghost-action" href="#pulse">SEE WHAT I'M WATCHING</a>
-          </div>
-          <p className="credentials">KING · RAPPER · FORMERLY EXTREMELY LIQUID</p>
-        </div>
+      <div className="scene-caption">somewhere outside the palace.<br /><span>ownership is a sensitive subject.</span></div>
+      <button className="character-hit" onClick={nextThought} aria-label="Hear another thought from NEBU" />
+      <div className="thought-area">
+        <span className="handwritten thought-intro">a word from me, apparently.</span>
+        <button className="thought" onClick={nextThought} aria-label="Show another NEBU thought">
+          <span key={thought} className="thought-text"><strong>{thoughts[thought][0]}<br /><em>{thoughts[thought][1]}</em></strong><small>{thoughts[thought][2]}</small></span>
+          <span className="thought-next">tap for more wisdom <span>↗</span></span>
+        </button>
+      </div>
 
-        <div className="king-stage" aria-label="NEBUCHADREKTZAR in the field">
-          <img src={initialData.characterUrl || "/nebu-fallen-king.webp"} alt="NEBUCHADREKTZAR" />
-          <div className="coin coin-one">$</div>
-          <div className="coin coin-two">$</div>
-          <div className="coin coin-three">$</div>
-          <div className="speech">do not call this a comeback.<br /><b>I never left.</b><small>I was outside.</small></div>
-          <div className="status-sticker">STATUS: {initialData.status.toUpperCase()}</div>
-        </div>
-      </section>
+      <div className="record-place">
+        <span className="handwritten record-note">i made another one. ↘</span>
+        <button className="record" onClick={openRecord} aria-label={`Open ${broadcast.title}`}>
+          <span className={`vinyl ${playing ? "spinning" : ""}`}><span><img src="/nebu-approved.webp" alt="" /></span></span>
+          <span className="sleeve"><img src={cover} alt="" /><span className="sleeve-caption">NEBUCHADREKTZAR<em>{broadcast.title}</em><small>ANOTHER GENERATIONAL RECORD</small></span><span className="parental">EXPLICIT<br />CONFIDENCE</span></span>
+          <span className="record-play"><PlayIcon pause={playing} /></span>
+        </button>
+        <button className="record-label" onClick={openRecord}><span className="release-dot" />{hasMedia ? "PLAY MY NEW ONE" : "MY NEXT MASTERPIECE"}<span>↗</span></button>
+        <span className="record-aside">{hasMedia ? "you’re welcome." : "the handlers are finding the file."}</span>
+      </div>
 
-      <section id="record" className="record-zone">
-        <div className="record-intro">
-          <span className="kicker">NEW ROYAL RELEASE</span>
-          <h2>I MADE<br />ANOTHER ONE.</h2>
-          <p>you&apos;re welcome</p>
-          <div className="nebu-note">I wrote this after making several completely reasonable decisions in a row.</div>
-        </div>
-
-        <div className="record-object">
-          <div className="record-cover">
-            <img src={artwork} alt={`${broadcast.title} artwork`} />
-            <div className="cover-stamp">DEGEN CONTENT</div>
-            <div className="cover-type"><small>NEBUCHADREKTZAR</small><strong>{broadcast.title}</strong></div>
-          </div>
-          <div className="player-console">
-            <div>
-              <small>{broadcast.subtitle}</small>
-              <strong>{broadcast.title}</strong>
-            </div>
-            <button onClick={togglePlayback} disabled={!broadcast.audioUrl} aria-label={playing ? "Pause" : "Play"}>
-              {broadcast.audioUrl ? (playing ? "Ⅱ" : "▶") : "—"}
-            </button>
-            <div className="progress"><i style={{ width: `${Math.round(progress * 100)}%` }} /></div>
-            <span>{broadcast.audioUrl ? (playing ? "TRANSMITTING" : "PLAY IT") : "HANDLERS HAVE NOT UPLOADED THE SONG"}</span>
-            {broadcast.audioUrl && <audio ref={audio} src={broadcast.audioUrl} preload="metadata" />}
-          </div>
-        </div>
-
-        <div className="archive">
-          <span className="kicker">OLDER MASTERPIECES</span>
-          {initialData.lore.map((item) => (
-            <div className="archive-row" key={`${item.code}-${item.title}`}>
-              <small>{item.code}</small><b>{item.title}</b><p>{item.copy}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="pulse" className="pulse-zone">
-        <div className="pulse-copy">
-          <span className="kicker">KINGDOM PULSE</span>
-          <h2>I SEE<br />EVERY ONE.</h2>
-          <p>I am awake. I am always awake.</p>
-          <div className="truth-label">HANDLERS ARE FAKING THIS FEED UNTIL THE REAL WIRE GOES LIVE.</div>
-        </div>
-
-        <div className="pulse-feed">
-          <div className="pulse-head"><span><i /> watching, as usual</span><small>NEBU CAM</small></div>
-          {visiblePulse.map((line, index) => (
-            <div className="pulse-line" key={`${line.tag}-${index}-${pulseIndex}`}>
-              <span>{line.tag}</span><p>{line.text}</p>
-            </div>
-          ))}
-          <div className="pulse-footer">if something breaks, it is almost certainly the market&apos;s fault.</div>
-        </div>
-      </section>
-
-      <section id="support" className="support-zone">
-        <div className="handler-card">
-          <span>HANDLER NOTE // DO NOT SHOW HIM</span>
-          <h2>BUY THE TOKEN.<br />SUPPORT THE ARTS.</h2>
-          <p>The artist lost everything.</p>
-          <small>May also be purchased by successful traders. We do not discriminate against temporary wealth.</small>
-        </div>
-
-        <div className="token-object">
-          <div className="nebu-interruption">I have expenses.<br />Nobody asks about my expenses.</div>
+      <aside className="handler">
+        <span className="tape" aria-hidden="true" />
+        <small>A NOTE FROM MANAGEMENT</small>
+        <h1>buy the token.<br />support the arts.</h1>
+        <p>The artist lost everything.</p>
+        <span className="nebu-correction">my wealth is resting.</span>
+        <div className="token-controls">
           <b>$N4X33</b>
-          <code>{initialData.contractAddress || "CONTRACT ADDRESS ARRIVES WHEN THE KING DOES"}</code>
-          <div className="token-actions">
-            <button onClick={copyAddress} disabled={!initialData.contractAddress}>{copied ? "COPIED. DO NOT LOSE IT." : "COPY ADDRESS"}</button>
-            <span>chart coming when there is something worth staring at</span>
-          </div>
+          {initialData.contractAddress ? <><button onClick={copyAddress}>COPY CA <span>↗</span></button><a href={`https://dexscreener.com/search?q=${encodeURIComponent(initialData.contractAddress)}`} target="_blank" rel="noopener noreferrer">CHART ↗</a></> : <span>CA SOON</span>}
         </div>
-      </section>
+        {initialData.contractAddress && <code className="contract">{initialData.contractAddress}</code>}
+        {copyState && <p role="status" className="copy-status">{copyState}</p>}
+      </aside>
 
-      <footer>
-        <div><b>NEBUCHADREKTZAR</b><span>$N4X33</span></div>
-        <strong>TIME IS FUD.</strong>
-        <div className="socials">
-          {initialData.socials.x && <a href={initialData.socials.x} target="_blank" rel="noreferrer">X</a>}
-          {initialData.socials.telegram && <a href={initialData.socials.telegram} target="_blank" rel="noreferrer">TELEGRAM</a>}
-        </div>
+      <footer className="world-footer">
+        <div className="feed-state"><span className="standby-dot" /><span>i’m watching.<small>CHAIN FEED · NOT CONNECTED</small></span></div>
+        <span className="footer-thought">king. rapper. formerly extremely liquid.</span>
+        <span className="sound-state"><i className={playing ? "active" : ""} />{playing ? "HISTORY IS PLAYING" : "SOUND ON YOUR TERMS"}</span>
       </footer>
+
+      <dialog ref={dialog} className="record-dialog" onCancel={stopMedia} onClose={stopMedia} onPlayCapture={event => {
+        dialog.current?.querySelectorAll<HTMLMediaElement>("audio, video").forEach(media => { if (media !== event.target) media.pause(); });
+        setPlaying(true);
+      }} onClick={event => { if (event.target === dialog.current) closeRecord(); }}>
+        <div className="record-room">
+          <button className="close" onClick={closeRecord} aria-label="Close record player">×</button>
+          <span className="room-eyebrow">I HAVE A RAP CAREER. PLEASE RESPECT IT.</span>
+          <h2>{broadcast.title}</h2>
+          <p className="room-subtitle">every song is generational. this one included.</p>
+          {canVideo && recordOpen ? <video ref={video} controls playsInline preload="metadata" poster={cover} src={broadcast.videoUrl} onError={() => { setVideoFailed(true); setPlaying(false); }} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} /> : <div className="fallback-cover"><img src={cover} alt={`${broadcast.title} artwork`} /></div>}
+          {!canVideo && canAudio && recordOpen && <div className="audio-controls">
+            <button onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}><PlayIcon pause={playing} /></button>
+            <label>the generational part<input aria-label="Seek track" type="range" min="0" max={duration || 1} step="0.1" value={progress} onChange={event => { if (player.current) { player.current.currentTime = Number(event.target.value); setProgress(Number(event.target.value)); } }} /></label>
+            <span>{Math.floor(progress / 60)}:{String(Math.floor(progress % 60)).padStart(2, "0")}</span>
+            <audio ref={player} src={broadcast.audioUrl} preload="metadata" onLoadedMetadata={() => setDuration(Number.isFinite(player.current?.duration) ? player.current!.duration : 0)} onTimeUpdate={() => setProgress(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => { setMediaError(true); setPlaying(false); }} />
+          </div>}
+          {!hasMedia && <p className="empty-record">{videoFailed ? "the video has left the building. the handlers have been informed." : "my next masterpiece is with the handlers."}<small>{videoFailed ? "try again in a moment. my legacy can wait." : "i would hurry them, but genius cannot be managed."}</small></p>}
+          {mediaError && <p role="alert">the speakers are being difficult. try pressing play again.</p>}
+          {initialData.tracks.length > 0 && <div className="older-records"><h3>older masterpieces.</h3>{initialData.tracks.map(track => <div key={track.id}><b>{track.title}</b><audio controls preload="none" src={track.audioUrl} onPlay={() => { player.current?.pause(); video.current?.pause(); }} /></div>)}</div>}
+        </div>
+      </dialog>
     </main>
   );
 }
