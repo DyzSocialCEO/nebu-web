@@ -1,6 +1,6 @@
 # NEBUCHADREKTZAR / $N4X33 — CANONICAL PROJECT STATE
 
-Last recovered: 2026-09-13
+Last updated: 2026-09-13
 
 ## Identity
 
@@ -16,16 +16,17 @@ Last recovered: 2026-09-13
 
 The product is a character + music/motion experience, not an audio player with a token page attached.
 
-### Current decision: FEATURED BROADCAST IS MOTION-GRAPHIC-FIRST
+### Featured Broadcast: IMPLEMENTED
 
-Homepage hero must support a featured broadcast in this priority order:
+Homepage hero uses this priority:
 
-1. VIDEO-FIRST (preferred): show the featured motion graphic / music video as the main broadcast surface.
-2. FALLBACK: if no video exists, show the featured still image + audio player.
+1. VIDEO-FIRST: the featured motion graphic / music video is the main broadcast surface.
+2. FALLBACK: if video is missing or fails to load, use still image/poster/character + audio.
+3. If audio is also unavailable, keep a clean visual-only hero; never show a broken media frame.
 
-Do not make a separate detached music-player section the main experience. The broadcast media, character and track are one hero experience.
+Do not make a separate detached music-player section the main experience. Broadcast media, character and track are one hero experience.
 
-### Canonical site-data target
+### Canonical site data
 
 ```ts
 featuredBroadcast: {
@@ -38,75 +39,87 @@ featuredBroadcast: {
 }
 ```
 
-Compatibility rule: existing `currentTrack` data must migrate/fallback safely so old stored content is not lost.
+Compatibility is implemented: legacy stored `currentTrack` title/subtitle/audio are read into `featuredBroadcast` automatically so old content is not lost.
 
 ### Public rendering rules
 
-- If `featuredBroadcast.videoUrl` exists: render responsive HTML5 video as the main hero broadcast.
-- Video must support `playsInline`, controls, poster art and responsive object-fit behavior.
-- Do not force sound autoplay. User interaction should start audio/video playback.
-- If video is missing: render `imageUrl` (or the main character art as last visual fallback) plus the audio experience.
-- If both video and audio are unavailable: still render the hero cleanly; never show a broken media frame.
-- Mobile: featured media + track identity/play action must remain obvious above the fold.
+- `videoUrl` renders responsive HTML5 video with controls, `playsInline`, poster support and no forced autoplay.
+- Runtime video load failure automatically falls back to still image/poster/character + audio.
+- Fallback audio has explicit user play/pause and progress state.
+- If media is missing, a branded placeholder renders instead of a broken frame.
+- Mobile hides nonessential diagnostic copy so the featured broadcast reaches the viewport quickly.
 
 ## Public site: nebu-web
 
-Existing foundation already contains:
+Implemented:
 
 - Next.js / React app
 - NEBU character/lore homepage
+- featured motion-first broadcast hero
+- safe `currentTrack` → `featuredBroadcast` compatibility migration
 - persistent site JSON on Railway `/data`
 - protected admin content API
-- current audio-first `currentTrack`
 - contract/social/lore fields
+- GitHub Actions production build check
 
-Next public-site task: migrate the audio-first hero into the Featured Broadcast system above.
+Build status: PASSING.
 
 ## Admin: nebu-admin
 
-Admin stays deliberately simple.
+Admin remains deliberately small.
 
-Current controls already include:
+Implemented controls:
 
 - status
 - eyebrow / headline / one-liner
-- character URL
-- track title/subtitle/audio URL
+- approved character/logo URL
+- featured broadcast title/subtitle
+- preferred video URL
+- video poster URL
+- fallback image URL
+- fallback audio URL
+- public-mode indicator + media preview
 - lore
 - contract address
 - X / Telegram
 
-Required upgrade:
+Security:
 
-- Rename/reframe ROYAL BROADCAST around `featuredBroadcast`.
-- Add fields for video URL, poster URL, image URL and audio URL.
-- Keep title/subtitle.
-- Show a simple preview/state indicator so it is clear whether the public site will render VIDEO or IMAGE + AUDIO.
-- Bunny storage/CDN remains `NEBUFILES`; media URLs stored here point to Bunny-served assets.
+- Browser never receives `ADMIN_API_KEY`.
+- Admin proxies mutations server-side to `nebu-web`.
+- Entire admin surface is protected by HTTP Basic auth in `proxy.ts`.
+- Production fails closed with HTTP 503 if admin login variables are missing.
+- Railway variables for admin API access and admin-panel login are staged with deploy disabled.
 
-## Infrastructure already created
+Build status: PASSING.
+
+## Infrastructure
 
 GitHub:
 - DyzSocialCEO/nebu-web
 - DyzSocialCEO/nebu-admin
+- both repos have CI build checks on `main`
 
 Railway:
 - Project: NEBUCHADREKTZAR
 - Services: nebu-web, nebu-admin
 - Production environment exists
 - nebu-web has a persistent 5 GB volume mounted at `/data`
-- server-side admin key is configured; never expose it to the browser
+- server-side admin API key configured
+- admin service API origin/API key/panel credentials staged
+- NOT DEPLOYED YET
 
 Bunny:
 - Storage/CDN asset bucket/zone name: NEBUFILES
+- intended for video, posters, feature images and audio
 
 Cloudflare:
-- Intended to sit in front of final public domain for DNS/security once production site is ready.
+- Intended to sit in front of the final public domain once production is ready.
 
 ## Build workflow
 
-1. Build functional product in GitHub first.
-2. Use approved logo + character sheet as visual source of truth.
+1. Build functional product in GitHub first. ✅
+2. Use approved logo + character sheet as visual source of truth. IN PROGRESS
 3. Give working product to Claude Design for visual-only refinement; do not let design work rewrite product logic blindly.
 4. Review/approve visuals.
 5. Deploy to Railway and connect Cloudflare.
@@ -121,7 +134,8 @@ Cloudflare:
 - Keep admin small and private.
 - Use Bunny NEBUFILES for heavy media rather than Railway filesystem/app bundle.
 - Do not lose existing stored data during schema migrations.
+- Do not deploy without explicit approval.
 
 ## Immediate next task
 
-Implement the Featured Broadcast schema + migration + public video-first rendering + admin controls, then build/test both repos before deployment.
+Integrate the approved Fallen King identity artwork into the working public UI, prepare a realistic hero state for visual review, then hand the working layout to Claude Design for visual-only refinement before Railway deployment.
