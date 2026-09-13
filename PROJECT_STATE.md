@@ -4,29 +4,114 @@ Last updated: 2026-09-13
 
 ## Identity
 
-- Project: NEBUCHADREKTZAR
-- Ticker: $N4X33
-- Biblical/lore anchor: Daniel 4:33 — the king loses his mind/kingdom and eats grass.
-- Tone: premium, funny, unhinged crypto-degen character world. Not a generic meme-token landing page.
-- Primary identity/logo artwork: the approved seated Fallen King image.
-- Character production reference: the NEBUCHADREKTZAR character sheet (front / 3-4 / profile / expressions / details).
-- Keep the same recognizable character: Babylonian gold crown, headphones, enormous curled beard, tired eyes, grass, maroon robe, ripped trousers, burgundy/cream sneakers, microphone.
+- Project: **NEBUCHADREKTZAR**
+- Ticker: **$N4X33**
+- Biblical anchor: **Daniel 4:33** — Nebuchadnezzar loses his sanity/status and eats grass.
+- Approved identity art: `public/nebu-fallen-king.webp`.
+- Character: Babylonian gold crown, headphones, giant curled beard, tired eyes, grass in mouth, maroon robe, ripped trousers, sneakers, microphone.
 
-## Product / UX direction
+## LOCKED CREATIVE DIRECTION — MEME FIRST
 
-The product is a character + music/motion experience, not an audio player with a token page attached.
+The previous dark/premium/corporate editorial direction is rejected.
 
-### Featured Broadcast: IMPLEMENTED
+NEBU must feel like a **cartoon meme kingdom**, not a serious crypto company.
 
-Homepage hero uses this priority:
+Immediate joke on page load:
 
-1. VIDEO-FIRST: the featured motion graphic / music video is the main broadcast surface.
-2. FALLBACK: if video is missing or fails to load, use still image/poster/character + audio.
-3. If audio is also unavailable, keep a clean visual-only hero; never show a broken media frame.
+> KING OF BABYLON → FOUND LEVERAGE → LOST THE KINGDOM → NOW EATS GRASS → HAS STARTED A NEW CAREER AS A DEGEN RAPPER TO PAY THE BILLS.
 
-Do not make a separate detached music-player section the main experience. Broadcast media, character and track are one hero experience.
+The visitor should understand the joke within seconds and laugh before reading a long explanation.
 
-### Canonical site data
+### Core comedy rule
+
+Use recognizable story beats, then translate them into crypto-degen logic.
+
+This is not a literal Bible retelling and not random sacrilegious shock copy. The humor comes from the absurd modern/degen reinterpretation.
+
+Example pattern:
+- historical/biblical event
+- crypto interpretation
+- immediate punchline
+
+For NEBU:
+- owns Babylon → thinks he is untouchable
+- discovers charts/leverage → believes risk management is for peasants
+- kingdom gets liquidated → treasury destroyed
+- Daniel 4:33 → now grazing outside
+- needs income → launches a rap career from the ruins
+
+### Tone
+
+- cartoonish
+- ridiculous
+- instantly readable
+- degen group-chat humor
+- exaggerated fictional details are welcome when they support the joke
+- visually colorful and alive
+- meme coin energy, not corporate brand strategy
+
+Avoid:
+- institutional/corporate crypto styling
+- SaaS/dashboard look
+- premium editorial seriousness as the dominant tone
+- generic Web3 cards
+- fake financial promises
+- fake utility
+
+## LOCKED VISUAL WORLD
+
+Target visual language:
+
+- cartoon Babylon kingdom at night
+- purple/deep-night sky
+- glowing moon / stars
+- ruined palace/castle silhouettes
+- grass foreground
+- falling coins / silly financial debris
+- bold yellow/cream/pink/lime/cyan accents
+- comic outlines and chunky shadows
+- stickers, speech bubbles and crooked badges
+- glowing/pulsing animation used playfully
+- large funny NEBU face/character moments
+
+The king's face is a primary punchline and must NEVER be obscured by headline text, speech cards, badges or other overlays.
+
+The approved concept direction includes jokes such as:
+- `KINGDOM: LIQUIDATED`
+- `ROYAL TREASURY: $0.43`
+- `CURRENT DIET: GRASS`
+- `LEVERAGE USED: TOO MUCH`
+- `SANITY: PENDING`
+- `ROYAL CREDIT SCORE: COOKED`
+- `ONE MORE 100X AND I GET THE PALACE BACK.`
+
+These establish the comedic world; copy can be improved but the joke density must remain high.
+
+## LOCKED STORY ARC
+
+The website is the story of a broke fallen king becoming a degen rapper.
+
+Suggested arc:
+
+1. **KING OF BABYLON** — had walls, gold, servants, property, everything.
+2. **DISCOVERED CHARTS** — green candles looked permanent.
+3. **USED STUPID LEVERAGE** — risk management was apparently for peasants.
+4. **KINGDOM LIQUIDATED** — palace, treasury and dignity gone.
+5. **DANIEL 4:33 / GRAZING ERA** — now outside eating grass.
+6. **NEW CAREER: DEGEN RAPPER** — microphone retained, crown retained, career pivot forced by insolvency.
+7. **LATEST TRACK** — the Featured Broadcast is his latest desperate music release to earn a living.
+
+The music section is not an abstract broadcast terminal anymore. It is his **new rap career / latest drop**.
+
+Possible labels include:
+- `THE KING DROPPED A TRACK`
+- `ROYAL RECORDS`
+- `NEW CAREER: DEGEN RAPPER`
+- `LATEST DESPERATE RELEASE`
+
+## FEATURED MUSIC / VIDEO — FUNCTIONAL LOGIC LOCKED
+
+Existing canonical schema remains:
 
 ```ts
 featuredBroadcast: {
@@ -39,103 +124,80 @@ featuredBroadcast: {
 }
 ```
 
-Compatibility is implemented: legacy stored `currentTrack` title/subtitle/audio are read into `featuredBroadcast` automatically so old content is not lost.
+Priority remains:
 
-### Public rendering rules
+1. Video first.
+2. If video is absent or fails, image/poster/character + audio.
+3. If audio is absent too, clean visual-only state.
+4. Never show a broken media frame.
 
-- `videoUrl` renders responsive HTML5 video with controls, `playsInline`, poster support and no forced autoplay.
-- Runtime video load failure automatically falls back to still image/poster/character + audio.
-- Fallback audio has explicit user play/pause and progress state.
-- If media is missing, a branded placeholder renders instead of a broken frame.
-- Mobile hides nonessential diagnostic copy so the featured broadcast reaches the viewport quickly.
+Keep:
+- HTML5 video controls
+- `playsInline`
+- poster support
+- no forced sound autoplay
+- runtime video error fallback
+- fallback audio play/pause/progress
+- legacy `currentTrack` compatibility
 
-## Public site: nebu-web
+### Motion graphic production
 
-Implemented:
+Preferred launch pipeline:
 
-- Next.js / React app
-- NEBU character/lore homepage
-- featured motion-first broadcast hero
-- safe `currentTrack` → `featuredBroadcast` compatibility migration
-- persistent site JSON on Railway `/data`
-- protected admin content API
-- contract/social/lore fields
-- GitHub Actions production build check
+1. Finish song master.
+2. Produce a motion-graphic music video externally.
+3. Lip sync is OPTIONAL, not required.
+4. A strong alternative is animated NEBU + moving kingdom + lyric typography synced to the song.
+5. Export final MP4 (H.264 video + AAC audio).
+6. Keep MP3/audio-only fallback plus WebP poster.
+7. Upload finished media to Bunny `NEBUFILES`.
+8. Site receives/plays the Bunny-served media.
 
-Build status: PASSING.
+Claude Code/Design should build the web presentation and lyric/motion UI, but should not be treated as the final dedicated lip-sync video generator.
 
-## Admin: nebu-admin
+## BUNNY MEDIA SECURITY — LOCKED PLAN
 
-Admin remains deliberately small.
+Goal is not impossible DRM. Screenshots/downloads are acceptable. The goal is to stop abuse/hotlinking/bandwidth theft.
 
-Implemented controls:
+- Never expose Bunny storage/API/signing secrets in browser code.
+- Secrets stay server-side in Railway environment variables.
+- Do not rely on permanent naked Bunny asset URLs for protected featured media.
+- Add a server endpoint that generates short-lived signed Bunny playback URLs.
+- Prefer expiring signed URLs (roughly 10–30 minutes).
+- Do not initially bind tokens to IP because mobile/VPN IP changes may break playback.
+- Add Bunny hotlink/referrer protection for the production domain.
+- Apply rate limiting to the signing endpoint / edge layer.
+- Heavy media remains on Bunny, not bundled in the Next.js app.
 
-- status
-- eyebrow / headline / one-liner
-- approved character/logo URL
-- featured broadcast title/subtitle
-- preferred video URL
-- video poster URL
-- fallback image URL
-- fallback audio URL
-- public-mode indicator + media preview
-- lore
-- contract address
-- X / Telegram
+## Current application state
 
-Security:
+`nebu-web`:
+- Next.js/React app exists
+- Featured Broadcast schema/fallback logic implemented
+- currentTrack migration implemented
+- persistent JSON content on Railway `/data`
+- admin content API implemented
+- CI passing before the meme redesign
 
-- Browser never receives `ADMIN_API_KEY`.
-- Admin proxies mutations server-side to `nebu-web`.
-- Entire admin surface is protected by HTTP Basic auth in `proxy.ts`.
-- Production fails closed with HTTP 503 if admin login variables are missing.
-- Railway variables for admin API access and admin-panel login are staged with deploy disabled.
-
-Build status: PASSING.
-
-## Infrastructure
-
-GitHub:
-- DyzSocialCEO/nebu-web
-- DyzSocialCEO/nebu-admin
-- both repos have CI build checks on `main`
+`nebu-admin`:
+- media URL controls implemented
+- server-side API key
+- protected admin panel
+- CI passing
 
 Railway:
-- Project: NEBUCHADREKTZAR
-- Services: nebu-web, nebu-admin
-- Production environment exists
-- nebu-web has a persistent 5 GB volume mounted at `/data`
-- server-side admin API key configured
-- admin service API origin/API key/panel credentials staged
-- NOT DEPLOYED YET
+- project/services exist
+- variables staged
+- **NOT DEPLOYED YET**
 
 Bunny:
-- Storage/CDN asset bucket/zone name: NEBUFILES
-- intended for video, posters, feature images and audio
+- `NEBUFILES` exists for media
 
 Cloudflare:
-- Intended to sit in front of the final public domain once production is ready.
-
-## Build workflow
-
-1. Build functional product in GitHub first. ✅
-2. Use approved logo + character sheet as visual source of truth. IN PROGRESS
-3. Give working product to Claude Design for visual-only refinement; do not let design work rewrite product logic blindly.
-4. Review/approve visuals.
-5. Deploy to Railway and connect Cloudflare.
-6. Export/download final repos as ZIPs for Claude audit: bugs, security, responsiveness, production issues.
-7. Fix audit findings, then launch.
-
-## Guardrails
-
-- Super responsive and clean; no tired/ugly template feel.
-- Cleverly integrate character, lore, media and token identity.
-- Avoid generic Web3 dashboard/landing-page aesthetic.
-- Keep admin small and private.
-- Use Bunny NEBUFILES for heavy media rather than Railway filesystem/app bundle.
-- Do not lose existing stored data during schema migrations.
-- Do not deploy without explicit approval.
+- planned after Railway deployment
 
 ## Immediate next task
 
-Integrate the approved Fallen King identity artwork into the working public UI, prepare a realistic hero state for visual review, then hand the working layout to Claude Design for visual-only refinement before Railway deployment.
+Use Claude Code on `DyzSocialCEO/nebu-web` to rebuild the public presentation around the LOCKED cartoon meme-kingdom / broke-degen-rapper direction while preserving the existing Featured Broadcast logic and backend contracts.
+
+Do not deploy until the redesigned frontend is reviewed and approved.
