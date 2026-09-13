@@ -12,34 +12,24 @@ export type PulseDisplayEvent = {
 };
 
 export default function NebuPulse({ latest = null }: { latest?: PulseDisplayEvent | null }) {
-  if (!latest) {
-    return (
-      <aside className={`${styles.pulse} ${styles.standby}`} aria-label="NEBU Pulse standby">
-        <div className={styles.top}>
-          <div className={styles.brand}><i className={styles.dot} /> NEBU PULSE</div>
-          <div className={styles.mode}>FEED STANDBY</div>
-        </div>
-        <div className={styles.body}>
-          <p className={styles.standbyCopy}>68 reactions loaded. waiting for the chain feed.</p>
-          <span className={styles.standbySmall}>no fake trades. no fake price moves. the king speaks when something actually happens.</span>
-        </div>
-      </aside>
-    );
-  }
-
   return (
-    <aside className={styles.pulse} aria-live="polite" aria-label="Latest NEBU Pulse reaction">
-      <div className={styles.top}>
-        <div className={styles.brand}><i className={styles.dot} /> NEBU PULSE</div>
-        <div className={styles.mode}>LIVE</div>
+    <div className={styles.box} aria-live="polite" aria-label="NEBU Pulse">
+      <div className={styles.head}>
+        <span><i className={styles.dot} />watching, as usual</span>
+        <b>{latest ? "live" : "feed standby"}</b>
       </div>
-      <div className={styles.body}>
-        <p className={styles.line}>{latest.text}</p>
-        <div className={styles.meta}>
-          <span className={styles.category}>{latest.category.replaceAll("_", " ")}</span>
-          <span>{latest.amountLabel ? `${latest.amountLabel} · ` : ""}{latest.timestamp}</span>
+      {latest ? (
+        <div className={`${styles.line} ${styles[latest.category.includes("sell") ? "sell" : latest.category.includes("buy") ? "buy" : "quiet"]}`}>
+          <span className={styles.who}>{latest.amountLabel || latest.category.replaceAll("_", " ")}</span>
+          <p>{latest.text}</p>
+          <small>{latest.timestamp}</small>
         </div>
-      </div>
-    </aside>
+      ) : (
+        <div className={styles.standby}>
+          <span>CHAIN FEED NOT CONNECTED</span>
+          <p>68 reactions are loaded. no fake trades are being shown.</p>
+        </div>
+      )}
+    </div>
   );
 }
