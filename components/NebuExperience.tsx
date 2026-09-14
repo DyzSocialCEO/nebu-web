@@ -52,6 +52,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   const coins = useRef<HTMLDivElement>(null);
 
   const canAudio = Boolean(broadcast.audioUrl);
+  const timelineReady = Number.isFinite(duration) && duration > 0;
   const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-approved.webp";
   const chartUrl = initialData.contractAddress
     ? `https://dexscreener.com/search?q=${encodeURIComponent(initialData.contractAddress)}`
@@ -141,6 +142,25 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     };
   }, []);
 
+  function syncAudioClock() {
+    const audio = player.current;
+    if (!audio) return;
+
+    if (Number.isFinite(audio.currentTime) && audio.currentTime >= 0) {
+      setProgress(audio.currentTime);
+    }
+
+    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+      setDuration(audio.duration);
+    }
+  }
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(syncAudioClock, 250);
+    return () => window.clearInterval(timer);
+  }, [playing]);
+
   async function toggleAudio() {
     const audio = player.current;
     if (!audio || !canAudio) return;
@@ -150,6 +170,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     }
     try {
       await audio.play();
+      syncAudioClock();
       setMediaError(false);
       flashKing("smug", 1200);
     } catch {
@@ -220,17 +241,19 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
                 aria-label="Seek track"
                 type="range"
                 min="0"
-                max={duration || 1}
+                max={timelineReady ? duration : 1}
                 step="0.1"
-                value={progress}
+                value={timelineReady ? Math.min(progress, duration) : 0}
+                disabled={!timelineReady}
                 onChange={event => {
-                  if (player.current) {
-                    player.current.currentTime = Number(event.target.value);
-                    setProgress(Number(event.target.value));
+                  if (player.current && timelineReady) {
+                    const next = Math.min(Number(event.target.value), duration);
+                    player.current.currentTime = next;
+                    setProgress(next);
                   }
                 }}
               />
-              <span>{formatTime(progress)} / {formatTime(duration)}</span>
+              <span>{formatTime(progress)} / {timelineReady ? formatTime(duration) : "--:--"}</span>
             </div>
           </div>}
 
@@ -240,10 +263,13 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
             ref={player}
             src={broadcast.audioUrl}
             preload="metadata"
-            onLoadedMetadata={() => setDuration(Number.isFinite(player.current?.duration) ? player.current!.duration : 0)}
-            onTimeUpdate={() => setProgress(player.current?.currentTime || 0)}
-            onPlay={() => setPlaying(true)}
-            onPause={() => setPlaying(false)}
+            onLoadedMetadata={syncAudioClock}
+            onLoadedData={syncAudioClock}
+            onDurationChange={syncAudioClock}
+            onCanPlay={syncAudioClock}
+            onTimeUpdate={syncAudioClock}
+            onPlay={() => { setPlaying(true); syncAudioClock(); }}
+            onPause={() => { setPlaying(false); syncAudioClock(); }}
             onEnded={() => { setPlaying(false); setProgress(0); }}
             onError={() => { setMediaError(true); setPlaying(false); }}
           />
