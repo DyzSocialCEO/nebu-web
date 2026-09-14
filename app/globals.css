@@ -1,7 +1,7 @@
-@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/barlow-condensed-700.ttf') format('truetype')}
-@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/caveat-600.ttf') format('truetype')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/dm-sans-400.ttf') format('truetype')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/dm-sans-700.ttf') format('truetype')}
+@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/barlow-condensed-700.woff2') format('woff2')}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/caveat-600.woff2') format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/dm-sans-400.woff2') format('woff2')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/dm-sans-700.woff2') format('woff2')}
 
 :root{color-scheme:dark;--ink:#eeeadc;--gold:#d4b76d;--acid:#c4d774;--night:#100e17;--paper:#dcd0ad;--paper-ink:#393128}
 *{box-sizing:border-box}
@@ -14,7 +14,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 ::selection{background:var(--acid);color:#18161a}
 
 .world{position:fixed;inset:0;overflow:hidden;isolation:isolate;background:var(--night)}
-.plate{position:absolute;inset:-4%;z-index:0;background:url('/nebu-garden-clean.jpg') center 52%/cover no-repeat;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+.plate{position:absolute;inset:-4%;z-index:0;background:center 52%/cover no-repeat;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+@media(min-width:561px){.plate{background-image:url('/nebu-garden.webp')}}
 .vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(115% 85% at 50% 46%,transparent 34%,rgba(9,6,15,.62) 100%),linear-gradient(180deg,rgba(9,6,15,.58) 0%,transparent 24%,transparent 58%,rgba(9,6,15,.8) 100%)}
 
 .coins{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
@@ -151,7 +152,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 
 /* phones */
 @media(max-width:560px){
-  .plate{inset:-2%;background-position:center 46%}
+  .plate{inset:-2%;background-position:center 46%;background-image:url('/nebu-garden-sm.webp')}
   .stage{width:86vw;bottom:13vh}
   .thought{margin-bottom:3vh;width:92vw}
   .thought strong{font-size:clamp(27px,8.4vw,36px)}

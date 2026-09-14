@@ -28,32 +28,27 @@ function PlayIcon({ pause = false }: { pause?: boolean }) {
     : <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m7 3 15 9-15 9z" /></svg>;
 }
 
-function formatTime(seconds: number) {
-  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-  const minutes = Math.floor(seconds / 60);
-  const remainder = Math.floor(seconds % 60);
-  return `${minutes}:${String(remainder).padStart(2, "0")}`;
-}
-
 export default function NebuExperience({ initialData }: { initialData: SiteData }) {
   const broadcast = initialData.featuredBroadcast;
   const [thought, setThought] = useState(0);
   const [kingFrame, setKingFrame] = useState<KingFrame>("neutral");
   const [pulse, setPulse] = useState<PulseLine | null>(null);
   const previousPulse = useRef<PulseLine | null>(null);
+  const [recordOpen, setRecordOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [mediaError, setMediaError] = useState(false);
   const [copyState, setCopyState] = useState("");
+  const dialog = useRef<HTMLDialogElement>(null);
   const player = useRef<HTMLAudioElement>(null);
   const plate = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const coins = useRef<HTMLDivElement>(null);
 
   const canAudio = Boolean(broadcast.audioUrl);
-  const timelineReady = Number.isFinite(duration) && duration > 0;
-  const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-approved.webp";
+  const hasMedia = canAudio;
+  const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-cover.webp";
   const chartUrl = initialData.contractAddress
     ? `https://dexscreener.com/search?q=${encodeURIComponent(initialData.contractAddress)}`
     : "";
@@ -105,10 +100,17 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
-    ["/nebu-neutral.webp", "/nebu-face-blink.webp", "/nebu-face-sideeye.webp", "/nebu-face-smug.webp"].forEach(src => {
-      const image = new Image();
-      image.src = src;
-    });
+    let warmTimer = 0;
+    const warmFaces = () => {
+      warmTimer = window.setTimeout(() => {
+        ["/nebu-face-blink.webp", "/nebu-face-sideeye.webp", "/nebu-face-smug.webp"].forEach(src => {
+          const image = new Image();
+          image.src = src;
+        });
+      }, 600);
+    };
+    if (document.readyState === "complete") warmFaces();
+    else window.addEventListener("load", warmFaces, { once: true });
 
     let blinkTimer = 0;
     let reactionTimer = 0;
@@ -135,6 +137,8 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     scheduleReaction();
 
     return () => {
+      window.clearTimeout(warmTimer);
+      window.removeEventListener("load", warmFaces);
       window.clearTimeout(blinkTimer);
       window.clearTimeout(reactionTimer);
       window.clearTimeout(blinkReturn);
@@ -142,41 +146,28 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     };
   }, []);
 
-  function syncAudioClock() {
-    const audio = player.current;
-    if (!audio) return;
-
-    if (Number.isFinite(audio.currentTime) && audio.currentTime >= 0) {
-      setProgress(audio.currentTime);
-    }
-
-    if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      setDuration(audio.duration);
-    }
+  function openRecord() {
+    setRecordOpen(true);
+    flashKing("smug", 1200);
+    dialog.current?.showModal();
   }
 
-  useEffect(() => {
-    if (!playing) return;
-    const timer = window.setInterval(syncAudioClock, 250);
-    return () => window.clearInterval(timer);
-  }, [playing]);
+  function stopMedia() {
+    dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => media.pause());
+    setPlaying(false);
+    setRecordOpen(false);
+  }
+
+  function closeRecord() {
+    stopMedia();
+    dialog.current?.close();
+  }
 
   async function toggleAudio() {
     const audio = player.current;
-    if (!audio || !canAudio) return;
-    if (!audio.paused) {
-      audio.pause();
-      return;
-    }
-    try {
-      await audio.play();
-      syncAudioClock();
-      setMediaError(false);
-      flashKing("smug", 1200);
-    } catch {
-      setMediaError(true);
-      setPlaying(false);
-    }
+    if (!audio) return;
+    if (!audio.paused) { audio.pause(); return; }
+    try { await audio.play(); setMediaError(false); } catch { setMediaError(true); }
   }
 
   async function copyAddress() {
@@ -202,7 +193,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
       <div ref={stage} className="stage">
         <div className="king-stack" aria-label="NEBUCHADREKTZAR">
-          <img className="king" src="/nebu-neutral.webp" alt="NEBUCHADREKTZAR" />
+          <img className="king" src="/nebu-neutral.webp" alt="NEBUCHADREKTZAR" width={1154} height={1363} fetchPriority="high" decoding="async" />
           <img className={`king-face ${kingFrame === "blink" ? "active" : ""}`} src="/nebu-face-blink.webp" alt="" aria-hidden="true" />
           <img className={`king-face ${kingFrame === "sideeye" ? "active" : ""}`} src="/nebu-face-sideeye.webp" alt="" aria-hidden="true" />
           <img className={`king-face ${kingFrame === "smug" ? "active" : ""}`} src="/nebu-face-smug.webp" alt="" aria-hidden="true" />
@@ -216,64 +207,14 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           </span>
         </button>
 
-        <div className={`record ${playing ? "playing" : ""}`}>
-          <button
-            className="record-main"
-            onClick={toggleAudio}
-            aria-label={canAudio ? `${playing ? "Pause" : "Play"} ${broadcast.title}` : `${broadcast.title} audio not loaded yet`}
-            aria-disabled={!canAudio}
-          >
-            <span className="cd" aria-hidden="true" />
-            <span className="sleeve">
-              <img src={cover} alt="" />
-              <b>{broadcast.title}</b>
-              {canAudio && <span className="cover-play"><PlayIcon pause={playing} /></span>}
-            </span>
-            <span className="record-note">{canAudio ? (playing ? "playing. obviously. ♫" : "i made another one. ▶") : "the masterpiece is loading."}</span>
-          </button>
-
-          {canAudio && <div className="inline-audio-controls">
-            <button className="inline-play" onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}>
-              <PlayIcon pause={playing} />
-            </button>
-            <div className="inline-timeline">
-              <input
-                aria-label="Seek track"
-                type="range"
-                min="0"
-                max={timelineReady ? duration : 1}
-                step="0.1"
-                value={timelineReady ? Math.min(progress, duration) : 0}
-                disabled={!timelineReady}
-                onChange={event => {
-                  if (player.current && timelineReady) {
-                    const next = Math.min(Number(event.target.value), duration);
-                    player.current.currentTime = next;
-                    setProgress(next);
-                  }
-                }}
-              />
-              <span>{formatTime(progress)} / {timelineReady ? formatTime(duration) : "--:--"}</span>
-            </div>
-          </div>}
-
-          {mediaError && <span role="alert" className="inline-media-error">speakers are being difficult.</span>}
-
-          <audio
-            ref={player}
-            src={broadcast.audioUrl}
-            preload="metadata"
-            onLoadedMetadata={syncAudioClock}
-            onLoadedData={syncAudioClock}
-            onDurationChange={syncAudioClock}
-            onCanPlay={syncAudioClock}
-            onTimeUpdate={syncAudioClock}
-            onPlay={() => { setPlaying(true); syncAudioClock(); }}
-            onPause={() => { setPlaying(false); syncAudioClock(); }}
-            onEnded={() => { setPlaying(false); setProgress(0); }}
-            onError={() => { setMediaError(true); setPlaying(false); }}
-          />
-        </div>
+        <button className={`record ${playing ? "playing" : ""}`} onClick={openRecord} aria-label={`Play ${broadcast.title}`}>
+          <span className="vinyl" aria-hidden="true" />
+          <span className="sleeve">
+            <img src={cover} alt="" width={480} height={480} decoding="async" />
+            <b>{broadcast.title}</b>
+          </span>
+          <span className="record-note">i made another one. ↘</span>
+        </button>
       </div>
 
       <div className="pulse" aria-live="polite">
@@ -281,7 +222,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
       </div>
 
       <a className="mark" href="/" aria-label="NEBUCHADREKTZAR home">
-        <img src="/nebu-avatar.webp" alt="" />
+        <img src="/nebu-avatar.webp" alt="" width={160} height={160} decoding="async" />
         <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>i lost everything. now i’m a rapper.</i></span>
       </a>
 
@@ -291,22 +232,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         <h1>buy the token.<br />support the arts.</h1>
         <p>i lost everything. now i’m a rapper.</p>
         <span className="correction">my wealth is resting.</span>
-        <a
-          href="/hire"
-          style={{
-            display: "block",
-            margin: "2px 0 14px",
-            padding: "11px 12px",
-            background: "#2e2922",
-            color: "#f1ead8",
-            fontFamily: "'Barlow Condensed', Impact, sans-serif",
-            fontSize: "18px",
-            fontWeight: 700,
-            letterSpacing: ".7px",
-            textAlign: "center",
-            transform: "rotate(-1deg)",
-          }}
-        >HIRE ME ↗</a>
 
         <div className="token-block">
           <div className="token-heading"><b>$N4X33</b></div>
@@ -321,6 +246,49 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           {copyState && <span role="status" className="copy-status">{copyState}</span>}
         </div>
       </aside>
+
+      <dialog ref={dialog} className="record-dialog" onCancel={stopMedia} onClose={stopMedia} onPlayCapture={event => {
+        dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => { if (media !== event.target) media.pause(); });
+        setPlaying(true);
+      }} onClick={event => { if (event.target === dialog.current) closeRecord(); }}>
+        <div className="record-room">
+          <button className="close" onClick={closeRecord} aria-label="Close record player">×</button>
+          <span className="room-eyebrow">I HAVE A RAP CAREER. PLEASE RESPECT IT.</span>
+          <h2>{broadcast.title}</h2>
+          <p className="room-subtitle">every song is generational. this one included.</p>
+
+          <div className={`fallback-cover ${playing ? "playing" : ""}`}><img src={cover} alt={`${broadcast.title} artwork`} /></div>
+
+          {canAudio && recordOpen && <div className="audio-controls">
+            <button onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}><PlayIcon pause={playing} /></button>
+            <label>the generational part
+              <input aria-label="Seek track" type="range" min="0" max={duration || 1} step="0.1" value={progress}
+                onChange={event => { if (player.current) { player.current.currentTime = Number(event.target.value); setProgress(Number(event.target.value)); } }} />
+            </label>
+            <span>{Math.floor(progress / 60)}:{String(Math.floor(progress % 60)).padStart(2, "0")}</span>
+            <audio ref={player} src={broadcast.audioUrl} preload="metadata"
+              onLoadedMetadata={() => setDuration(Number.isFinite(player.current?.duration) ? player.current!.duration : 0)}
+              onTimeUpdate={() => setProgress(player.current?.currentTime || 0)}
+              onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)}
+              onError={() => { setMediaError(true); setPlaying(false); }} />
+          </div>}
+
+          {!hasMedia && <p className="empty-record">
+            my next masterpiece is with the handlers.
+            <small>i would hurry them, but genius cannot be managed.</small>
+          </p>}
+
+          {mediaError && <p role="alert" className="media-error">the speakers are being difficult. try pressing play again.</p>}
+
+          {initialData.tracks.length > 0 && <div className="older-records">
+            <h3>older masterpieces.</h3>
+            {initialData.tracks.map(track => <div key={track.id}>
+              <b>{track.title}</b>
+              <audio controls preload="none" src={track.audioUrl} onPlay={() => { player.current?.pause(); }} />
+            </div>)}
+          </div>}
+        </div>
+      </dialog>
     </main>
   );
 }
