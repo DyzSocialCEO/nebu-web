@@ -1,0 +1,15 @@
+import type { Metadata } from "next";
+import HireExperience from "@/components/HireExperience";
+import { getSiteData } from "@/lib/site-data";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "HIRE NEBU — THE RAPPER FOR THE TRENCHES",
+  description: "Win, loss, rug, miracle, betrayal. Hire NEBU in $N4X33 and turn the trenches into music.",
+};
+
+export default async function HirePage() {
+  const data = await getSiteData();
+  return <HireExperience initialData={data} />;
+}
