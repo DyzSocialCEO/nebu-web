@@ -3,7 +3,7 @@ import "./globals.css";
 import "./player-inline.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://n4x33.com"),
+  metadataBase: new URL("https://n4x33.xyz"),
   alternates: { canonical: "/" },
   title: "NEBUCHADREKTZAR — $N4X33",
   description: "I’m not wrong. I’m early. King. Rapper. Formerly extremely liquid. NEBUCHADREKTZAR · $N4X33.",
