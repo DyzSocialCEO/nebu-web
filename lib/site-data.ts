@@ -54,9 +54,17 @@ function cleanString(value: unknown, fallback: string, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : fallback;
 }
 
-function safeLink(value: unknown): string {
+function safeHttpsLink(value: unknown): string {
   const link = cleanString(value, "", 1000);
   return /^https:\/\//i.test(link) ? link : "";
+}
+
+function safeMediaLink(value: unknown): string {
+  const link = cleanString(value, "", 1000);
+  if (!link) return "";
+  if (/^https:\/\//i.test(link)) return link;
+  if (/^\/(?!\/)/.test(link)) return link;
+  return "";
 }
 
 export function normalizeSiteData(value: unknown): SiteData {
@@ -87,24 +95,24 @@ export function normalizeSiteData(value: unknown): SiteData {
     characterUrl: cleanString(input.characterUrl, defaultSiteData.characterUrl, 1000) || defaultSiteData.characterUrl,
     contractAddress: cleanString(input.contractAddress, defaultSiteData.contractAddress, 200),
     featuredBroadcast: {
-      title: cleanString(featured.title, defaultSiteData.featuredBroadcast.title, 120),
+      title: cleanString(featured.title, defaultSiteData.featuredBroadcast.title, 120) || defaultSiteData.featuredBroadcast.title,
       subtitle: cleanString(featured.subtitle, defaultSiteData.featuredBroadcast.subtitle, 120),
-      videoUrl: cleanString(featured.videoUrl, defaultSiteData.featuredBroadcast.videoUrl, 1000),
-      posterUrl: cleanString(featured.posterUrl, defaultSiteData.featuredBroadcast.posterUrl, 1000),
-      imageUrl: cleanString(featured.imageUrl, defaultSiteData.featuredBroadcast.imageUrl, 1000),
-      audioUrl: cleanString(featured.audioUrl, defaultSiteData.featuredBroadcast.audioUrl, 1000),
+      videoUrl: safeMediaLink(featured.videoUrl),
+      posterUrl: safeMediaLink(featured.posterUrl),
+      imageUrl: safeMediaLink(featured.imageUrl),
+      audioUrl: safeMediaLink(featured.audioUrl),
     },
     lore: lore.length ? lore : defaultSiteData.lore,
     tracks: Array.isArray(input.tracks) ? input.tracks.slice(0, 20).flatMap((item, i) => {
       if (!item || typeof item !== "object") return [];
       const track = item as Record<string, unknown>;
-      const audioUrl = cleanString(track.audioUrl, "", 1000);
-      if (!audioUrl || !/^(https?:\/\/|\/(?!\/))/.test(audioUrl)) return [];
-      return [{ id: cleanString(track.id, `track-${i}`, 80), title: cleanString(track.title, "another masterpiece", 120), audioUrl }];
+      const audioUrl = safeMediaLink(track.audioUrl);
+      if (!audioUrl) return [];
+      return [{ id: cleanString(track.id, `track-${i}`, 80), title: cleanString(track.title, "another masterpiece", 120) || "another masterpiece", audioUrl }];
     }) : [],
     socials: {
-      x: safeLink(socials.x),
-      telegram: safeLink(socials.telegram),
+      x: safeHttpsLink(socials.x),
+      telegram: safeHttpsLink(socials.telegram),
     },
   };
 }
