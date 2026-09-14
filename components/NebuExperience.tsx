@@ -28,26 +28,30 @@ function PlayIcon({ pause = false }: { pause?: boolean }) {
     : <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m7 3 15 9-15 9z" /></svg>;
 }
 
+function formatTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const minutes = Math.floor(seconds / 60);
+  const remainder = Math.floor(seconds % 60);
+  return `${minutes}:${String(remainder).padStart(2, "0")}`;
+}
+
 export default function NebuExperience({ initialData }: { initialData: SiteData }) {
   const broadcast = initialData.featuredBroadcast;
   const [thought, setThought] = useState(0);
   const [kingFrame, setKingFrame] = useState<KingFrame>("neutral");
   const [pulse, setPulse] = useState<PulseLine | null>(null);
   const previousPulse = useRef<PulseLine | null>(null);
-  const [recordOpen, setRecordOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [mediaError, setMediaError] = useState(false);
   const [copyState, setCopyState] = useState("");
-  const dialog = useRef<HTMLDialogElement>(null);
   const player = useRef<HTMLAudioElement>(null);
   const plate = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const coins = useRef<HTMLDivElement>(null);
 
   const canAudio = Boolean(broadcast.audioUrl);
-  const hasMedia = canAudio;
   const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-approved.webp";
   const chartUrl = initialData.contractAddress
     ? `https://dexscreener.com/search?q=${encodeURIComponent(initialData.contractAddress)}`
@@ -137,28 +141,21 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     };
   }, []);
 
-  function openRecord() {
-    setRecordOpen(true);
-    flashKing("smug", 1200);
-    dialog.current?.showModal();
-  }
-
-  function stopMedia() {
-    dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => media.pause());
-    setPlaying(false);
-    setRecordOpen(false);
-  }
-
-  function closeRecord() {
-    stopMedia();
-    dialog.current?.close();
-  }
-
   async function toggleAudio() {
     const audio = player.current;
-    if (!audio) return;
-    if (!audio.paused) { audio.pause(); return; }
-    try { await audio.play(); setMediaError(false); } catch { setMediaError(true); }
+    if (!audio || !canAudio) return;
+    if (!audio.paused) {
+      audio.pause();
+      return;
+    }
+    try {
+      await audio.play();
+      setMediaError(false);
+      flashKing("smug", 1200);
+    } catch {
+      setMediaError(true);
+      setPlaying(false);
+    }
   }
 
   async function copyAddress() {
@@ -198,14 +195,59 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           </span>
         </button>
 
-        <button className={`record ${playing ? "playing" : ""}`} onClick={openRecord} aria-label={`Play ${broadcast.title}`}>
-          <span className="vinyl" aria-hidden="true" />
-          <span className="sleeve">
-            <img src={cover} alt="" />
-            <b>{broadcast.title}</b>
-          </span>
-          <span className="record-note">i made another one. ↘</span>
-        </button>
+        <div className={`record ${playing ? "playing" : ""}`}>
+          <button
+            className="record-main"
+            onClick={toggleAudio}
+            aria-label={canAudio ? `${playing ? "Pause" : "Play"} ${broadcast.title}` : `${broadcast.title} audio not loaded yet`}
+            aria-disabled={!canAudio}
+          >
+            <span className="cd" aria-hidden="true" />
+            <span className="sleeve">
+              <img src={cover} alt="" />
+              <b>{broadcast.title}</b>
+              {canAudio && <span className="cover-play"><PlayIcon pause={playing} /></span>}
+            </span>
+            <span className="record-note">{canAudio ? (playing ? "playing. obviously. ♫" : "i made another one. ▶") : "the masterpiece is loading."}</span>
+          </button>
+
+          {canAudio && <div className="inline-audio-controls">
+            <button className="inline-play" onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}>
+              <PlayIcon pause={playing} />
+            </button>
+            <div className="inline-timeline">
+              <input
+                aria-label="Seek track"
+                type="range"
+                min="0"
+                max={duration || 1}
+                step="0.1"
+                value={progress}
+                onChange={event => {
+                  if (player.current) {
+                    player.current.currentTime = Number(event.target.value);
+                    setProgress(Number(event.target.value));
+                  }
+                }}
+              />
+              <span>{formatTime(progress)} / {formatTime(duration)}</span>
+            </div>
+          </div>}
+
+          {mediaError && <span role="alert" className="inline-media-error">speakers are being difficult.</span>}
+
+          <audio
+            ref={player}
+            src={broadcast.audioUrl}
+            preload="metadata"
+            onLoadedMetadata={() => setDuration(Number.isFinite(player.current?.duration) ? player.current!.duration : 0)}
+            onTimeUpdate={() => setProgress(player.current?.currentTime || 0)}
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
+            onEnded={() => { setPlaying(false); setProgress(0); }}
+            onError={() => { setMediaError(true); setPlaying(false); }}
+          />
+        </div>
       </div>
 
       <div className="pulse" aria-live="polite">
@@ -237,49 +279,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           {copyState && <span role="status" className="copy-status">{copyState}</span>}
         </div>
       </aside>
-
-      <dialog ref={dialog} className="record-dialog" onCancel={stopMedia} onClose={stopMedia} onPlayCapture={event => {
-        dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => { if (media !== event.target) media.pause(); });
-        setPlaying(true);
-      }} onClick={event => { if (event.target === dialog.current) closeRecord(); }}>
-        <div className="record-room">
-          <button className="close" onClick={closeRecord} aria-label="Close record player">×</button>
-          <span className="room-eyebrow">I HAVE A RAP CAREER. PLEASE RESPECT IT.</span>
-          <h2>{broadcast.title}</h2>
-          <p className="room-subtitle">every song is generational. this one included.</p>
-
-          <div className={`fallback-cover ${playing ? "playing" : ""}`}><img src={cover} alt={`${broadcast.title} artwork`} /></div>
-
-          {canAudio && recordOpen && <div className="audio-controls">
-            <button onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}><PlayIcon pause={playing} /></button>
-            <label>the generational part
-              <input aria-label="Seek track" type="range" min="0" max={duration || 1} step="0.1" value={progress}
-                onChange={event => { if (player.current) { player.current.currentTime = Number(event.target.value); setProgress(Number(event.target.value)); } }} />
-            </label>
-            <span>{Math.floor(progress / 60)}:{String(Math.floor(progress % 60)).padStart(2, "0")}</span>
-            <audio ref={player} src={broadcast.audioUrl} preload="metadata"
-              onLoadedMetadata={() => setDuration(Number.isFinite(player.current?.duration) ? player.current!.duration : 0)}
-              onTimeUpdate={() => setProgress(player.current?.currentTime || 0)}
-              onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)}
-              onError={() => { setMediaError(true); setPlaying(false); }} />
-          </div>}
-
-          {!hasMedia && <p className="empty-record">
-            my next masterpiece is with the handlers.
-            <small>i would hurry them, but genius cannot be managed.</small>
-          </p>}
-
-          {mediaError && <p role="alert" className="media-error">the speakers are being difficult. try pressing play again.</p>}
-
-          {initialData.tracks.length > 0 && <div className="older-records">
-            <h3>older masterpieces.</h3>
-            {initialData.tracks.map(track => <div key={track.id}>
-              <b>{track.title}</b>
-              <audio controls preload="none" src={track.audioUrl} onPlay={() => { player.current?.pause(); }} />
-            </div>)}
-          </div>}
-        </div>
-      </dialog>
     </main>
   );
 }
