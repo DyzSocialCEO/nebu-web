@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./player-inline.css";
+import "./hire-cta.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://n4x33.xyz"),
