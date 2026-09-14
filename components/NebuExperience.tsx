@@ -291,6 +291,22 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         <h1>buy the token.<br />support the arts.</h1>
         <p>i lost everything. now i’m a rapper.</p>
         <span className="correction">my wealth is resting.</span>
+        <a
+          href="/hire"
+          style={{
+            display: "block",
+            margin: "2px 0 14px",
+            padding: "11px 12px",
+            background: "#2e2922",
+            color: "#f1ead8",
+            fontFamily: "'Barlow Condensed', Impact, sans-serif",
+            fontSize: "18px",
+            fontWeight: 700,
+            letterSpacing: ".7px",
+            textAlign: "center",
+            transform: "rotate(-1deg)",
+          }}
+        >HIRE ME ↗</a>
 
         <div className="token-block">
           <div className="token-heading"><b>$N4X33</b></div>
