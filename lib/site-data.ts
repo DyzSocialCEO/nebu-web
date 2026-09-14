@@ -10,6 +10,13 @@ export type FeaturedBroadcast = {
   audioUrl: string;
 };
 
+export type HireSettings = {
+  enabled: boolean;
+  rateAmount: string;
+  walletAddress: string;
+  dailyCap: number;
+};
+
 export type SiteData = {
   status: string;
   eyebrow: string;
@@ -21,6 +28,7 @@ export type SiteData = {
   lore: Array<{ code: string; title: string; copy: string }>;
   tracks: Array<{ id: string; title: string; audioUrl: string }>;
   socials: { x: string; telegram: string };
+  hire: HireSettings;
 };
 
 export const defaultSiteData: SiteData = {
@@ -45,6 +53,12 @@ export const defaultSiteData: SiteData = {
   ],
   tracks: [],
   socials: { x: "", telegram: "" },
+  hire: {
+    enabled: false,
+    rateAmount: "",
+    walletAddress: "",
+    dailyCap: 1,
+  },
 };
 
 const dataDir = process.env.DATA_DIR || path.join(process.cwd(), ".data");
@@ -76,6 +90,7 @@ export function normalizeSiteData(value: unknown): SiteData {
     ? (input.featuredBroadcast as Record<string, unknown>)
     : legacyTrack;
   const socials = input.socials && typeof input.socials === "object" ? (input.socials as Record<string, unknown>) : {};
+  const hire = input.hire && typeof input.hire === "object" ? (input.hire as Record<string, unknown>) : {};
   const loreInput = Array.isArray(input.lore) ? input.lore.slice(0, 6) : defaultSiteData.lore;
   const lore = loreInput.map((item, i) => {
     const source = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
@@ -86,6 +101,9 @@ export function normalizeSiteData(value: unknown): SiteData {
       copy: cleanString(source.copy, fallback.copy, 300),
     };
   });
+
+  const dailyCapRaw = typeof hire.dailyCap === "number" ? hire.dailyCap : Number(hire.dailyCap);
+  const dailyCap = Number.isFinite(dailyCapRaw) ? Math.min(20, Math.max(1, Math.floor(dailyCapRaw))) : 1;
 
   return {
     status: cleanString(input.status, defaultSiteData.status, 32),
@@ -113,6 +131,12 @@ export function normalizeSiteData(value: unknown): SiteData {
     socials: {
       x: safeHttpsLink(socials.x),
       telegram: safeHttpsLink(socials.telegram),
+    },
+    hire: {
+      enabled: hire.enabled === true,
+      rateAmount: cleanString(hire.rateAmount, "", 80),
+      walletAddress: cleanString(hire.walletAddress, "", 200),
+      dailyCap,
     },
   };
 }
