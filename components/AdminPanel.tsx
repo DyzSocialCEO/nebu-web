@@ -24,7 +24,7 @@ export default function AdminPanel() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const remembered = window.sessionStorage.getItem("nebu-admin-key") || "";
+    const remembered = window.sessionStorage.getItem("n4x33-ops-key") || "";
     if (remembered) setKey(remembered);
   }, []);
 
@@ -44,7 +44,7 @@ export default function AdminPanel() {
   }, [dirty]);
 
   async function adminRequest(method: "GET" | "PUT", body?: SiteData) {
-    const response = await fetch("/api/admin/site", {
+    const response = await fetch("/api/n4x33-ops-18763/site", {
       method,
       headers: {
         "x-nebu-admin-key": key,
@@ -55,6 +55,10 @@ export default function AdminPanel() {
     });
 
     if (response.status === 401) throw new Error("Wrong admin key.");
+    if (response.status === 429) {
+      const retry = response.headers.get("retry-after");
+      throw new Error(retry ? `Too many failed attempts. Try again in about ${Math.ceil(Number(retry) / 60)} minutes.` : "Too many failed attempts. Try again later.");
+    }
     if (!response.ok) {
       const payload = await response.json().catch(() => null) as { error?: string } | null;
       throw new Error(payload?.error || `Request failed (${response.status}).`);
@@ -76,7 +80,7 @@ export default function AdminPanel() {
       const clean = cloneData(data);
       setDraft(clean);
       setSavedSnapshot(JSON.stringify(clean));
-      window.sessionStorage.setItem("nebu-admin-key", key);
+      window.sessionStorage.setItem("n4x33-ops-key", key);
       setState("idle");
     } catch (error) {
       setState("error");
@@ -149,7 +153,7 @@ export default function AdminPanel() {
   }
 
   function forgetKey() {
-    window.sessionStorage.removeItem("nebu-admin-key");
+    window.sessionStorage.removeItem("n4x33-ops-key");
     setDraft(null);
     setSavedSnapshot("");
     setKey("");
