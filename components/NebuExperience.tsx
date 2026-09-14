@@ -38,19 +38,16 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [videoFailed, setVideoFailed] = useState(false);
   const [mediaError, setMediaError] = useState(false);
   const [copyState, setCopyState] = useState("");
   const dialog = useRef<HTMLDialogElement>(null);
   const player = useRef<HTMLAudioElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
   const plate = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const coins = useRef<HTMLDivElement>(null);
 
-  const canVideo = Boolean(broadcast.videoUrl) && !videoFailed;
   const canAudio = Boolean(broadcast.audioUrl);
-  const hasMedia = canVideo || canAudio;
+  const hasMedia = canAudio;
   const cover = broadcast.imageUrl || broadcast.posterUrl || "/nebu-approved.webp";
   const chartUrl = initialData.contractAddress
     ? `https://dexscreener.com/search?q=${encodeURIComponent(initialData.contractAddress)}`
@@ -147,7 +144,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   }
 
   function stopMedia() {
-    dialog.current?.querySelectorAll<HTMLMediaElement>("audio, video").forEach(media => media.pause());
+    dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => media.pause());
     setPlaying(false);
     setRecordOpen(false);
   }
@@ -242,7 +239,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
       </aside>
 
       <dialog ref={dialog} className="record-dialog" onCancel={stopMedia} onClose={stopMedia} onPlayCapture={event => {
-        dialog.current?.querySelectorAll<HTMLMediaElement>("audio, video").forEach(media => { if (media !== event.target) media.pause(); });
+        dialog.current?.querySelectorAll<HTMLMediaElement>("audio").forEach(media => { if (media !== event.target) media.pause(); });
         setPlaying(true);
       }} onClick={event => { if (event.target === dialog.current) closeRecord(); }}>
         <div className="record-room">
@@ -251,13 +248,9 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           <h2>{broadcast.title}</h2>
           <p className="room-subtitle">every song is generational. this one included.</p>
 
-          {canVideo && recordOpen
-            ? <video ref={video} controls playsInline preload="metadata" poster={cover} src={broadcast.videoUrl}
-                onError={() => { setVideoFailed(true); setPlaying(false); }}
-                onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} />
-            : <div className={`fallback-cover ${playing ? "playing" : ""}`}><img src={cover} alt={`${broadcast.title} artwork`} /></div>}
+          <div className={`fallback-cover ${playing ? "playing" : ""}`}><img src={cover} alt={`${broadcast.title} artwork`} /></div>
 
-          {!canVideo && canAudio && recordOpen && <div className="audio-controls">
+          {canAudio && recordOpen && <div className="audio-controls">
             <button onClick={toggleAudio} aria-label={playing ? "Pause track" : "Play track"}><PlayIcon pause={playing} /></button>
             <label>the generational part
               <input aria-label="Seek track" type="range" min="0" max={duration || 1} step="0.1" value={progress}
@@ -272,8 +265,8 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           </div>}
 
           {!hasMedia && <p className="empty-record">
-            {videoFailed ? "the video has left the building. the handlers have been informed." : "my next masterpiece is with the handlers."}
-            <small>{videoFailed ? "try again in a moment. my legacy can wait." : "i would hurry them, but genius cannot be managed."}</small>
+            my next masterpiece is with the handlers.
+            <small>i would hurry them, but genius cannot be managed.</small>
           </p>}
 
           {mediaError && <p role="alert" className="media-error">the speakers are being difficult. try pressing play again.</p>}
@@ -282,7 +275,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
             <h3>older masterpieces.</h3>
             {initialData.tracks.map(track => <div key={track.id}>
               <b>{track.title}</b>
-              <audio controls preload="none" src={track.audioUrl} onPlay={() => { player.current?.pause(); video.current?.pause(); }} />
+              <audio controls preload="none" src={track.audioUrl} onPlay={() => { player.current?.pause(); }} />
             </div>)}
           </div>}
         </div>
