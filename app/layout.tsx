@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./player-inline.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nebu-web-production.up.railway.app"),
