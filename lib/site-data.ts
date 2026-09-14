@@ -26,7 +26,7 @@ export type SiteData = {
   contractAddress: string;
   featuredBroadcast: FeaturedBroadcast;
   lore: Array<{ code: string; title: string; copy: string }>;
-  tracks: Array<{ id: string; title: string; audioUrl: string }>;
+  tracks: Array<{ id: string; title: string; audioUrl: string; story: string; imageUrl: string }>;
   socials: { x: string; telegram: string };
   hire: HireSettings;
 };
@@ -121,12 +121,18 @@ export function normalizeSiteData(value: unknown): SiteData {
       audioUrl: safeMediaLink(featured.audioUrl),
     },
     lore: lore.length ? lore : defaultSiteData.lore,
-    tracks: Array.isArray(input.tracks) ? input.tracks.slice(0, 20).flatMap((item, i) => {
+    tracks: Array.isArray(input.tracks) ? input.tracks.slice(0, 60).flatMap((item, i) => {
       if (!item || typeof item !== "object") return [];
       const track = item as Record<string, unknown>;
       const audioUrl = safeMediaLink(track.audioUrl);
       if (!audioUrl) return [];
-      return [{ id: cleanString(track.id, `track-${i}`, 80), title: cleanString(track.title, "another masterpiece", 120) || "another masterpiece", audioUrl }];
+      return [{
+        id: cleanString(track.id, `track-${i}`, 80),
+        title: cleanString(track.title, "another masterpiece", 120) || "another masterpiece",
+        audioUrl,
+        story: cleanString(track.story, "", 400),
+        imageUrl: safeMediaLink(track.imageUrl),
+      }];
     }) : [],
     socials: {
       x: safeHttpsLink(socials.x),

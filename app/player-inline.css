@@ -53,3 +53,8 @@
 @media(prefers-reduced-motion:reduce){
   .record.playing .cd{animation:none}
 }
+
+.record-more{display:block;margin-top:9px;font:600 17px/1.1 'Caveat',Georgia,serif;color:#cfc2a4;text-decoration:none;text-shadow:0 2px 12px #0d0a13;transition:color .2s}
+.record-more:hover{color:#c4d774}
+@media(max-width:900px){.record-more{font-size:15px;margin-top:7px}}
+@media(max-width:560px){.record-more{font-size:14px;margin-top:6px}}

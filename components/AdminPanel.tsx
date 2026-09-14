@@ -10,6 +10,8 @@ const emptyTrack = () => ({
   id: `track-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   title: "",
   audioUrl: "",
+  story: "",
+  imageUrl: "",
 });
 
 function cloneData(data: SiteData): SiteData {
@@ -345,6 +347,22 @@ export default function AdminPanel() {
                     value={track.audioUrl}
                     placeholder="https://.../track.mp3"
                     onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, audioUrl: event.target.value } : item))}
+                  />
+                  <input
+                    aria-label={`Track ${index + 1} cover image URL`}
+                    type="url"
+                    value={track.imageUrl}
+                    placeholder="https://.../cover.webp"
+                    onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, imageUrl: event.target.value } : item))}
+                  />
+                  <textarea
+                    className={styles.trackStory}
+                    aria-label={`Track ${index + 1} story`}
+                    rows={2}
+                    maxLength={400}
+                    value={track.story}
+                    placeholder="what he says about it. i was told to make something hopeful. i made this instead."
+                    onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, story: event.target.value } : item))}
                   />
                   <button
                     className={styles.remove}

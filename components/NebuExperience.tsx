@@ -402,6 +402,12 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
           {mediaError && <span role="alert" className="inline-media-error">speakers are being difficult.</span>}
 
+          {initialData.tracks.length > 0 && (
+            <a className="record-more" href="/records">
+              {initialData.tracks.length === 1 ? "one more of these" : `${initialData.tracks.length} more of these`} &#8594;
+            </a>
+          )}
+
           <audio
             ref={player}
             preload="none"
