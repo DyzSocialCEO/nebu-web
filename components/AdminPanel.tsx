@@ -344,8 +344,8 @@ export default function AdminPanel() {
                   />
                   <button
                     className={styles.remove}
-                    aria-label={`Remove ${track.title || `track ${index + 1}`}`}
-                    onClick={() => setField("tracks", draft.tracks.filter((_, i) => i !== index)}
+                    aria-label={`Remove track ${index + 1}`}
+                    onClick={() => setField("tracks", draft.tracks.filter((_, i) => i !== index))}
                   >×</button>
                 </div>
               ))}
