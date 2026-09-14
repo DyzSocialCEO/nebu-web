@@ -54,6 +54,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .record-note{display:block;font:600 20px 'Caveat',Georgia,serif;color:var(--gold);margin-top:12px;white-space:nowrap}
 
 .pulse{position:absolute;z-index:7;right:3%;top:42%;width:min(24vw,360px);display:flex;justify-content:flex-start;pointer-events:none}
+.pulse-demo{display:inline-block;margin-bottom:7px;background:var(--acid);color:#18161a;font:700 9px/1 'DM Sans',Arial,sans-serif;letter-spacing:.9px;padding:5px 8px;border-radius:2px}
 .pulse-message{background:rgba(10,7,17,.74);backdrop-filter:blur(7px);border-left:3px solid var(--acid);padding:10px 14px;font-size:14px;line-height:1.45;border-radius:3px;box-shadow:0 12px 30px #0007;animation:pulse-in .5s ease both;text-align:left}
 @keyframes pulse-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
