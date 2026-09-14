@@ -1,7 +1,9 @@
-@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/barlow-condensed-700.ttf') format('truetype')}
-@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/caveat-600.ttf') format('truetype')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/dm-sans-400.ttf') format('truetype')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/dm-sans-700.ttf') format('truetype')}
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>NEBU design review</title>
+<style>@font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:700;font-display:swap;src:url('public/fonts/barlow-condensed-700.ttf') format('truetype')}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url('public/fonts/caveat-600.ttf') format('truetype')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('public/fonts/dm-sans-400.ttf') format('truetype')}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('public/fonts/dm-sans-700.ttf') format('truetype')}
 
 :root{color-scheme:dark;--ink:#eeeadc;--gold:#d4b76d;--acid:#c4d774;--night:#100e17;--paper:#dcd0ad;--paper-ink:#393128}
 *{box-sizing:border-box}
@@ -14,7 +16,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 ::selection{background:var(--acid);color:#18161a}
 
 .world{position:fixed;inset:0;overflow:hidden;isolation:isolate;background:var(--night)}
-.plate{position:absolute;inset:-4%;z-index:0;background:url('/nebu-garden-clean.jpg') center 52%/cover no-repeat;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+.plate{position:absolute;inset:-4%;z-index:0;background:url('public/nebu-garden-clean.jpg') center 52%/cover no-repeat;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
 .vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(115% 85% at 50% 46%,transparent 34%,rgba(9,6,15,.62) 100%),linear-gradient(180deg,rgba(9,6,15,.58) 0%,transparent 24%,transparent 58%,rgba(9,6,15,.8) 100%)}
 
 .coins{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
@@ -172,3 +174,52 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
   .plate,.coins{transform:none!important}
   .stage{transform:translateX(-50%)!important}
 }
+
+html,body{overflow:hidden}</style></head><body>
+<main class="world"><div class="plate"></div><div class="vignette"></div>
+<div class="coins" id="coins"></div>
+<div class="stage" id="stage"><div class="king-stack">
+<img class="king" src="public/nebu-neutral.webp" alt="NEBUCHADREKTZAR">
+<img class="king-face" id="f-blink" src="public/nebu-face-blink.webp" alt="">
+<img class="king-face" id="f-sideeye" src="public/nebu-face-sideeye.webp" alt="">
+<img class="king-face" id="f-smug" src="public/nebu-face-smug.webp" alt=""></div>
+<button class="king-hit" id="hit" aria-label="Another thought"></button>
+<button class="thought" id="thought" aria-label="Another thought"><span class="thought-anim" id="thx"></span></button>
+<button class="record" id="record" aria-label="Play"><span class="vinyl"></span>
+<span class="sleeve"><img src="public/nebu-approved.webp" alt=""><b>HE SAID SOON</b></span>
+<span class="record-note">i made another one. &#8600;</span></button></div>
+<div class="pulse" id="pulse"></div>
+<a class="mark" href="#"><img src="public/nebu-avatar.webp" alt=""><span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i>i was extremely liquid. now i rap.</i></span></a>
+<aside class="management-note"><span class="tape"></span><small>A NOTE FROM MANAGEMENT</small>
+<h1>buy the token.<br>support the arts.</h1><p>The artist lost everything.</p>
+<span class="correction">my wealth is resting.</span>
+<div class="token-block"><div class="token-heading"><b>$N4X33</b><span>MEME COIN</span></div>
+<label>CONTRACT ADDRESS</label><code>NOT SET YET</code>
+<div class="token-actions"><span>CA SOON</span></div></div></aside></main>
+<script>
+const thoughts=[["i\u2019m not wrong.", "i\u2019m early.", "very fucking early."], ["my wealth", "is resting.", "do not disturb it."], ["take profits?", "take what?", "i have principles."], ["we just", "got here.", "it has been nine months."], ["the house is", "being renovated.", "indefinitely."], ["i have a", "rap career.", "please respect the arts."], ["time", "is fud.", "look it up."]],silence=["nothing is happening. that is usually when everything is happening", "quiet. I like quiet. I am lying", "no buys, no sells, just me and the grass", "this is the boring part. the boring part is where it is made", "I have refreshed this page forty times. nothing. it is fine", "everybody is asleep. I do not sleep", "still here. still early. still recording"];
+let ti=0;const thx=document.getElementById('thx');
+function paint(){const t=thoughts[ti];thx.innerHTML='<strong>'+t[0]+'<br><em>'+t[1]+'</em></strong><small>'+t[2]+'</small>';
+ thx.style.animation='none';void thx.offsetWidth;thx.style.animation='';}
+function nextT(){ti=(ti+1)%thoughts.length;paint();}
+paint();
+const faces={blink:document.getElementById('f-blink'),sideeye:document.getElementById('f-sideeye'),smug:document.getElementById('f-smug')};
+function show(k,ms){Object.values(faces).forEach(e=>e.classList.remove('active'));
+ if(k){faces[k].classList.add('active');setTimeout(()=>faces[k].classList.remove('active'),ms);}}
+document.getElementById('thought').onclick=()=>{nextT();show('sideeye',1050);};
+document.getElementById('hit').onclick=()=>{nextT();show('sideeye',1050);};
+document.getElementById('record').onclick=function(){this.classList.toggle('playing');show('smug',1200);};
+const co=document.getElementById('coins');
+[[8,7.8,-2.8,.75],[18,10.2,-7.1,.9],[31,8.9,-4.3,.62],[43,12.4,-9.2,.82],[57,7.1,-1.5,.68],[68,11.3,-6.2,.95],[77,9.6,-3.4,.7],[87,13.1,-8.7,.86],[95,8.2,-5.1,.58]].forEach(c=>{const e=document.createElement('i');e.style.left=c[0]+'%';e.style.animationDuration=c[1]+'s';e.style.animationDelay=c[2]+'s';e.style.scale=c[3];co.appendChild(e);});
+const pb=document.getElementById('pulse');let pi=0;
+function pulse(){pb.innerHTML='<div class="pulse-message">'+silence[pi++%silence.length]+'</div>';setTimeout(()=>pb.innerHTML='',7000);}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+ setTimeout(pulse,4800);setInterval(pulse,17000);setInterval(nextT,16000);
+ (function blink(){setTimeout(()=>{show('blink',145);blink();},3600+Math.random()*3600);})();
+ (function react(){setTimeout(()=>{show('sideeye',1250);react();},13500+Math.random()*9000);})();
+ const pl=document.querySelector('.plate'),st=document.getElementById('stage');
+ addEventListener('pointermove',e=>{const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;
+  pl.style.transform='translate('+(x*-22)+'px,'+(y*-14)+'px) scale(1.035)';
+  co.style.transform='translate('+(x*-11)+'px,'+(y*-7)+'px)';
+  st.style.transform='translateX(-50%) translate('+(x*9)+'px,'+(y*5)+'px)';},{passive:true});}
+</script></body></html>

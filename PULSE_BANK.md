@@ -16,7 +16,7 @@ He can be annoyed. He can be affected. He can never be WRONG and he can never be
 1. that is a small amount of money and I noticed it anyway
 2. thank you. that is nothing to me but thank you
 3. somebody bought with pocket change. respect the entry
-4. tiny. babylon was tiny once
+4. tiny. everything was tiny once
 5. I saw that. I see all of them. it is a curse
 6. small buy, correct decision, we move
 7. you bought the dip with what you had. that is the whole thing
@@ -26,7 +26,7 @@ He can be annoyed. He can be affected. He can never be WRONG and he can never be
 
 9. good. you are early. I am not going to say it twice
 10. new holder. you have made the best decision available to you today
-11. welcome to the kingdom. bring a chair, we are here a while
+11. welcome. bring a chair, we are here a while
 12. bought. good. now do not look at it for seven years
 13. somebody just understood the thesis
 14. that is a serious entry from a serious person
@@ -42,7 +42,7 @@ He can be annoyed. He can be affected. He can never be WRONG and he can never be
 21. that is a real buy. I am going to go and record something happy
 22. you did not do that by accident
 23. big entry. you will be in the songs
-24. whoever that was, the palace has a room for you
+24. whoever that was, there is a seat next to me
 25. I am not going to pretend I did not see that
 26. someone just bought like they read the whitepaper. there is no whitepaper
 
@@ -114,6 +114,6 @@ He can be annoyed. He can be affected. He can never be WRONG and he can never be
 - never let him say he is broke, poor, scared or wrong. he can be annoyed, tired, obsessed, petty.
 - never explain the joke in the line. no "which is funny because".
 - he can admit a sell hurt ONLY as a physical thing, never as a doubt. "I felt that" is allowed. "maybe this is over" is not.
-- no bible words. no Babylon overload. one Babylon reference per twenty lines maximum.
+- no lore words at all. no babylon, kingdom, palace, throne, empire. the picture already says it.
 - keep them short. one breath each. they scroll past.
 - never use the same shape twice in a row on screen. avoid stacking "I'm not X, I'm Y".

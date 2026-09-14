@@ -28,7 +28,7 @@ export const defaultSiteData: SiteData = {
   eyebrow: "ROYAL TRANSMISSION // CONFIDENCE UNCHANGED",
   heroTitle: "I'M NOT WRONG. I'M EARLY.",
   heroCopy: "I don't have a job. I have a rap career and a thesis.",
-  characterUrl: "/nebu-fallen-king.webp",
+  characterUrl: "/nebu-neutral.webp",
   contractAddress: "",
   featuredBroadcast: {
     title: "HE SAID SOON",

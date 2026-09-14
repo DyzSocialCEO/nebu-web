@@ -51,3 +51,7 @@ Supply real Bunny media URLs through existing admin controls. Real token feed an
 
 ## Resume rule
 Read this file, inspect git HEAD and deployed commit, then inspect actual code. Older draft PRs are historical alternatives, not instructions to revert this release. Check `RELEASE.md` for verification and deployment outcome.
+
+
+## Frozen homepage identity line
+Under the NEBUCHADREKTZAR / $N4X33 mark, keep: `i was extremely liquid. now i rap.` This is core premise copy: it tells a new visitor who the character is and why the music exists.
