@@ -24,9 +24,35 @@
   transform: rotate(.5deg) translateY(-1px);
 }
 
+/* Locked NEBU identity copy. Keep these two lines distinct. */
+.mark i,
+.management-note > p {
+  font-size: 0 !important;
+}
+
+.mark i::after {
+  content: "the rapper for the trenches.";
+  font: 600 16px/1.15 'Caveat', Georgia, serif;
+  color: #f3ead1;
+}
+
+.management-note > p::after {
+  content: "i make music now. shit happened.";
+  font: 400 12px/1.4 'DM Sans', Arial, sans-serif;
+  color: var(--paper-ink);
+}
+
+.management-note > .correction {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .token-block .token-actions + .token-actions a[href="/hire"] {
     font-size: 18px;
     padding: 11px 10px;
+  }
+
+  .mark i::after {
+    font-size: 14px;
   }
 }
