@@ -1,0 +1,32 @@
+.token-block .token-actions + .token-actions {
+  display: block;
+  margin: 13px 0 3px;
+}
+
+.token-block .token-actions + .token-actions a[href="/hire"] {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  background: #2e2922;
+  color: #f1ead8;
+  border: 1px solid #1d1915;
+  box-shadow: 0 5px 0 #a99972;
+  font-family: 'Barlow Condensed', Impact, sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .8px;
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
+.token-block .token-actions + .token-actions a[href="/hire"]:hover {
+  transform: rotate(.5deg) translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .token-block .token-actions + .token-actions a[href="/hire"] {
+    font-size: 18px;
+    padding: 11px 10px;
+  }
+}
