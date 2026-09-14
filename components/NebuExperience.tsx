@@ -214,18 +214,18 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
       <a className="mark" href="/" aria-label="NEBUCHADREKTZAR home">
         <img src="/nebu-avatar.webp" alt="" />
-        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i>i was extremely liquid. now i rap.</i></span>
+        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>i lost everything. now i’m a rapper.</i></span>
       </a>
 
       <aside className="management-note">
         <span className="tape" aria-hidden="true" />
-        <small>A NOTE FROM MANAGEMENT</small>
+        <small>A NOTE FROM NEBU</small>
         <h1>buy the token.<br />support the arts.</h1>
-        <p>The artist lost everything.</p>
+        <p>i lost everything. now i’m a rapper.</p>
         <span className="correction">my wealth is resting.</span>
 
         <div className="token-block">
-          <div className="token-heading"><b>$N4X33</b><span>MEME COIN</span></div>
+          <div className="token-heading"><b>$N4X33</b></div>
           <label>CONTRACT ADDRESS</label>
           <code>{initialData.contractAddress || "NOT SET YET"}</code>
           <div className="token-actions">
