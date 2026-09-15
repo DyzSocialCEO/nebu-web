@@ -50,7 +50,8 @@ export default function RecordsList({ tracks, fallbackCover }: { tracks: Track[]
 
     try {
       if (activeId !== track.id) {
-        const response = await fetch(`/api/audio/sign?track=${encodeURIComponent(track.id)}`, {
+        const endpoint = track.id === "featured" ? "/api/audio/sign" : `/api/audio/sign?track=${encodeURIComponent(track.id)}`;
+        const response = await fetch(endpoint, {
           cache: "no-store",
           headers: { Accept: "application/json" },
         });

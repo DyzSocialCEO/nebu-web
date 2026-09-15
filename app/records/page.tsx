@@ -24,7 +24,19 @@ export default async function RecordsPage() {
         <p>newest first. they are all my best work.</p>
       </header>
 
-      <RecordsList tracks={data.tracks} fallbackCover={data.featuredBroadcast.imageUrl} />
+      <RecordsList
+        tracks={[
+          {
+            id: "featured",
+            title: data.featuredBroadcast.title,
+            audioUrl: data.featuredBroadcast.audioUrl,
+            story: data.featuredBroadcast.subtitle,
+            imageUrl: data.featuredBroadcast.imageUrl,
+          },
+          ...[...data.tracks].reverse(),
+        ].filter(track => track.audioUrl)}
+        fallbackCover={data.featuredBroadcast.imageUrl}
+      />
 
       <footer className="records-foot">
         <a href="/">&#8592; back to me</a>
