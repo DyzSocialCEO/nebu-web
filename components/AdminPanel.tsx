@@ -155,6 +155,27 @@ export default function AdminPanel() {
     }
   }
 
+  async function setCommissions(open: boolean) {
+    if (!draft) return;
+    setDraft(current => current ? { ...current, hire: { ...current.hire, enabled: open } } : current);
+    setState("saving");
+    setMessage("");
+    try {
+      const base = savedSnapshot ? JSON.parse(savedSnapshot) as SiteData : draft;
+      const data = await adminRequest("PUT", { ...base, hire: { ...base.hire, enabled: open } });
+      const clean = cloneData(data);
+      setSavedSnapshot(JSON.stringify(clean));
+      setDraft(current => current ? { ...current, hire: { ...current.hire, enabled: clean.hire.enabled } } : clean);
+      setState("saved");
+      setMessage(open ? "Commissions open. HIRE ME is back on the site." : "Commissions closed. HIRE ME is off the site.");
+      window.setTimeout(() => setState(current => current === "saved" ? "idle" : current), 2600);
+    } catch (error) {
+      setDraft(current => current ? { ...current, hire: { ...current.hire, enabled: !open } } : current);
+      setState("error");
+      setMessage(error instanceof Error ? error.message : "Could not change commissions.");
+    }
+  }
+
   function forgetKey() {
     window.sessionStorage.removeItem("n4x33-ops-key");
     setDraft(null);
@@ -388,6 +409,42 @@ export default function AdminPanel() {
           <div className={styles.sectionHead}>
             <div>
               <span>04</span>
+              <h2>commissions</h2>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={draft.hire.enabled}
+              className={draft.hire.enabled ? styles.primary : styles.secondary}
+              onClick={() => setCommissions(!draft.hire.enabled)}
+            >{draft.hire.enabled ? "OPEN" : "CLOSED"}</button>
+          </div>
+
+          <p className={styles.empty}>
+            {draft.hire.enabled
+              ? "HIRE ME is on the site and the form accepts submissions."
+              : "HIRE ME is hidden, /hire is unreachable, submissions are refused. This switch saves the moment you press it."}
+          </p>
+
+          <div className={styles.twoCol}>
+            <label className={styles.field}>
+              <span>RATE — IN TOKENS</span>
+              <input maxLength={80} value={draft.hire.rateAmount} placeholder="e.g. 250000"
+                onChange={event => setField("hire", { ...draft.hire, rateAmount: event.target.value })} />
+            </label>
+            <label className={styles.field}>
+              <span>WALLET THAT RECEIVES PAYMENT</span>
+              <input maxLength={200} value={draft.hire.walletAddress} placeholder="your solana address"
+                onChange={event => setField("hire", { ...draft.hire, walletAddress: event.target.value })} />
+            </label>
+          </div>
+          <p className={styles.empty}>The form only opens when this is OPEN and both boxes are filled. Rate and wallet publish with PUBLISH.</p>
+        </section>
+
+        <section className={`${styles.card} ${styles.full}`}>
+          <div className={styles.sectionHead}>
+            <div>
+              <span>05</span>
               <h2>pulse</h2>
             </div>
             <span className={styles.standby}>STANDBY</span>

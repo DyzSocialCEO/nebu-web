@@ -453,9 +453,11 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
               <a href={chartUrl} target="_blank" rel="noopener noreferrer">CHART ↗</a>
             </> : <span>CA SOON</span>}
           </div>
-          <div className="token-actions">
-            <a href="/hire">HIRE ME ↗</a>
-          </div>
+          {initialData.hire.enabled && (
+            <div className="token-actions">
+              <a href="/hire">HIRE ME ↗</a>
+            </div>
+          )}
           {copyState && <span role="status" className="copy-status">{copyState}</span>}
         </div>
       </aside>

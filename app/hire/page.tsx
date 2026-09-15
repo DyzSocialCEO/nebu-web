@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import HireExperience from "@/components/HireExperience";
 import { getSiteData } from "@/lib/site-data";
 
@@ -11,5 +12,6 @@ export const metadata: Metadata = {
 
 export default async function HirePage() {
   const data = await getSiteData();
+  if (!data.hire.enabled) notFound();
   return <HireExperience initialData={data} />;
 }
