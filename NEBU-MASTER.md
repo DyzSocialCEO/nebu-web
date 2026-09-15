@@ -3,7 +3,7 @@
 Canonical recovery document. Repository: `DyzSocialCEO/nebu-web`. Do not inspect unrelated projects to recover NEBU context.
 
 ## Approved identity
-NEBUCHADREKTZAR ($N4X33). The character IS the meme and the brand.
+NEBUCHADREKTZAR ($N3BU). The character IS the meme and the brand.
 The exact user-approved man is preserved in `public/nebu-approved.webp`: tired half-closed eyes, brown skin, architectural gold crown, gold/black headphones, tightly curled black beard, grass in mouth, maroon robe, ripped trousers, sneakers, microphone, broken throne.
 Every new pose must be this same man. No substitute mascot, generic king, alternate face, or separate symbol logo. The head/avatar is the token logo.
 `public/nebu-world.webp` places that character in the nighttime ruined garden. `public/nebu-avatar.webp` is the matching head mark.
@@ -41,17 +41,21 @@ User explicitly authorized building and deploying this website in the current se
 Railway project NEBUCHADREKTZAR: `a3d7396f-55ea-4c87-8454-ddc6bd323b2f`.
 Public service: `348ebe10-9b66-4a28-86b7-f8cd8ebc7d35`.
 Production environment: `3dce1d8f-2258-4132-93f4-acc62cc7d082`.
-Existing source branch: `meme-kingdom-direct-build`. Domain: `https://nebu-web-production.up.railway.app`.
+Source branch: `main`. Canonical public domain: `https://nebuchadrektzar.xyz`.
 Persistent volume: `/data`, `DATA_DIR` content JSON. Do not discard it.
-Admin API key remains server-side. Heavy media uses Bunny NEBUFILES URLs; no secrets in browser.
+Admin API key remains server-side. Heavy media uses Bunny URLs; no secrets in browser.
+The private `/n4x33-ops-18763` route is an internal security slug, not public token branding. Do not rename it during branding changes unless explicitly requested; changing it touches protected API/admin wiring.
 
 ## Remaining external inputs
-At recovery, live public data contained no song/video URL, contract address, or socials. Do not claim music or token trading is available until configured.
-Supply real Bunny media URLs through existing admin controls. Real token feed and signed Bunny playback endpoint are future integration work; neither is implemented by merely displaying media URLs.
+Do not claim token trading is available until a real contract is configured.
+Supply real Bunny media URLs through existing admin controls. Never reset persistent content to change branding.
 
 ## Resume rule
 Read this file, inspect git HEAD and deployed commit, then inspect actual code. Older draft PRs are historical alternatives, not instructions to revert this release. Check `RELEASE.md` for verification and deployment outcome.
 
-
-## Frozen homepage identity line
-Under the NEBUCHADREKTZAR / $N4X33 mark, keep: `i was extremely liquid. now i rap.` This is core premise copy: it tells a new visitor who the character is and why the music exists.
+## Locked public identity copy
+Ticker: `$N3BU`.
+Primary domain: `nebuchadrektzar.xyz`.
+Under the NEBUCHADREKTZAR / $N3BU mark, keep: `the rapper for the trenches.`
+NEBU note: `i make music now. shit happened.`
+Do not restore `my wealth is resting.` anywhere in the public experience.
