@@ -1,0 +1,5 @@
+.buy-action{display:block;margin-top:10px;background:#2d281f!important;color:#f4ecd8!important;border:1px solid #5f5137!important;padding:9px 10px!important;text-align:center;font:700 14px/1 'Barlow Condensed',Impact,sans-serif!important;letter-spacing:.7px!important;box-shadow:0 3px 0 #8e7a50;transform:rotate(-.7deg)}
+.buy-action:hover{transform:rotate(0deg) translateY(-1px)}
+.token-actions.launch-utilities{flex-wrap:wrap;gap:7px 12px}
+.token-actions.launch-utilities button,.token-actions.launch-utilities a{white-space:nowrap}
+@media(max-width:560px){.buy-action{font-size:12px!important;padding:8px 8px!important}.token-actions.launch-utilities{gap:5px 9px}}
