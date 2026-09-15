@@ -22,15 +22,13 @@ export default function PwaInstall() {
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
+    let workerTimer = 0;
+
     const registerWorker = () => {
       if (!("serviceWorker" in navigator)) return;
-      const run = () => navigator.serviceWorker.register("/sw.js").catch(() => undefined);
-      if ("requestIdleCallback" in window) {
-        (window as Window & { requestIdleCallback: (cb: () => void, options?: { timeout: number }) => number })
-          .requestIdleCallback(run, { timeout: 1600 });
-      } else {
-        window.setTimeout(run, 350);
-      }
+      workerTimer = globalThis.setTimeout(() => {
+        navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+      }, 350);
     };
 
     if (document.readyState === "complete") registerWorker();
@@ -38,7 +36,10 @@ export default function PwaInstall() {
 
     if (isStandalone()) {
       setInstalled(true);
-      return () => window.removeEventListener("load", registerWorker);
+      return () => {
+        window.removeEventListener("load", registerWorker);
+        globalThis.clearTimeout(workerTimer);
+      };
     }
 
     setShowIosInstall(isIos());
@@ -59,6 +60,7 @@ export default function PwaInstall() {
       window.removeEventListener("load", registerWorker);
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
+      globalThis.clearTimeout(workerTimer);
     };
   }, []);
 
