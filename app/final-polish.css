@@ -1,0 +1,30 @@
+/* final launch polish: preserve the approved visual system, remove redundant copy, keep narrow-phone controls usable */
+
+.thought small{display:none!important}
+
+.origin-line{
+  margin:0 0 10px;
+  font:700 12px/1.15 'DM Sans',Arial,sans-serif;
+  letter-spacing:.35px;
+  text-transform:none;
+  color:var(--n3-gold);
+  text-shadow:0 2px 14px #0d0a13;
+}
+
+@media(max-width:900px){
+  .origin-line{margin-bottom:8px;font-size:11.5px;letter-spacing:.2px;text-align:center}
+}
+
+@media(max-width:560px){
+  .pulse{left:12px;right:auto;top:calc(var(--n3-head) + 72px);bottom:auto;width:min(62vw,240px)}
+}
+
+@media(max-width:380px){
+  .origin-line{font-size:10.5px;letter-spacing:.1px}
+  .site-head{padding-left:10px;padding-right:10px;gap:8px}
+  .site-head__brand b{font-size:12px}
+  .site-head__brand small{display:none}
+  .site-head__actions{gap:5px}
+  .site-head__actions button,.site-head__hire{display:inline-flex;padding:7px 8px;font-size:8.5px;letter-spacing:1px}
+  .site-head__buy{padding:8px 9px;font-size:9px;letter-spacing:1px}
+}

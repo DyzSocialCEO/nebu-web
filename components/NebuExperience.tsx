@@ -2,19 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import NowPlaying from "@/components/NowPlaying";
-import { pickPulseLine, type PulseLine } from "@/lib/pulse-bank";
 import type { SiteData } from "@/lib/site-data";
 
 type KingFrame = "neutral" | "blink" | "sideeye" | "smug";
 
 const thoughts = [
-  ["i’m not wrong.", "i’m early.", "very fucking early."],
-  ["portfolio update?", "absolutely not.", "mind your business."],
-  ["take profits?", "take what?", "i have principles."],
-  ["we just", "got here.", "it has been nine months."],
-  ["the house is", "being renovated.", "indefinitely."],
-  ["i have a", "rap career.", "please respect the arts."],
-  ["time", "is fud.", "look it up."],
+  ["i’m not wrong.", "i’m early."],
+  ["portfolio update?", "absolutely not."],
+  ["take profits?", "take what?"],
+  ["we just", "got here."],
+  ["the house is", "being renovated."],
+  ["i have a", "rap career."],
+  ["time", "is fud."],
 ];
 
 const coinStyles = [
@@ -42,11 +41,9 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   const [thought, setThought] = useState(0);
   const [kingFrame, setKingFrame] = useState<KingFrame>("neutral");
   const [pulse, setPulse] = useState<{ text: string; key: number } | null>(null);
-  const previousPulse = useRef<PulseLine | null>(null);
   const pulseKey = useRef(0);
   const pulseHide = useRef(0);
   const [demoMode, setDemoMode] = useState(false);
-  const [feedLive, setFeedLive] = useState(false);
   const [criticalReady, setCriticalReady] = useState(false);
   const [facesLoaded, setFacesLoaded] = useState(false);
   const plate = useRef<HTMLDivElement>(null);
@@ -103,12 +100,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     pulseHide.current = window.setTimeout(() => setPulse(current => current?.key === key ? null : current), 7000);
   }
 
-  function showQuietPulse() {
-    const next = pickPulseLine("silence", previousPulse.current);
-    previousPulse.current = next;
-    showPulse(next.text);
-  }
-
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
@@ -138,7 +129,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     try {
       source = new EventSource(demo ? "/api/pulse?demo=1" : "/api/pulse");
     } catch {
-      setFeedLive(false);
       return;
     }
 
@@ -146,33 +136,15 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
       try {
         const payload = JSON.parse(event.data) as { kind?: string; text?: string };
         if (payload.kind === "line" && payload.text) {
-          setFeedLive(true);
           showPulse(payload.text);
-        } else if (payload.kind === "live") {
-          setFeedLive(true);
-        } else if (payload.kind === "standby") {
-          setFeedLive(false);
         }
       } catch {
         // malformed frames are ignored instead of killing the stream
       }
     };
 
-    source.onerror = () => setFeedLive(false);
     return () => source.close();
   }, []);
-
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || feedLive) return;
-
-    const firstPulse = window.setTimeout(showQuietPulse, 4800);
-    const pulseTimer = window.setInterval(showQuietPulse, 17000);
-    return () => {
-      window.clearTimeout(firstPulse);
-      window.clearInterval(pulseTimer);
-    };
-  }, [feedLive]);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -240,7 +212,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           <button className="thought" onClick={nextThought} aria-label="Another thought from NEBU">
             <span key={thought} className="thought-anim">
               <strong>{thoughts[thought][0]}<br /><em>{thoughts[thought][1]}</em></strong>
-              <small>{thoughts[thought][2]}</small>
             </span>
           </button>
         </div>

@@ -8,6 +8,7 @@ import "./player-inline.css";
 import "./hire-cta.css";
 import "./launch-actions.css";
 import "./public-pages.css";
+import "./final-polish.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nebuchadrektzar.xyz"),
