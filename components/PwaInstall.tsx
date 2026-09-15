@@ -22,13 +22,23 @@ export default function PwaInstall() {
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => undefined);
-    }
+    const registerWorker = () => {
+      if (!("serviceWorker" in navigator)) return;
+      const run = () => navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+      if ("requestIdleCallback" in window) {
+        (window as Window & { requestIdleCallback: (cb: () => void, options?: { timeout: number }) => number })
+          .requestIdleCallback(run, { timeout: 1600 });
+      } else {
+        window.setTimeout(run, 350);
+      }
+    };
+
+    if (document.readyState === "complete") registerWorker();
+    else window.addEventListener("load", registerWorker, { once: true });
 
     if (isStandalone()) {
       setInstalled(true);
-      return;
+      return () => window.removeEventListener("load", registerWorker);
     }
 
     setShowIosInstall(isIos());
@@ -46,6 +56,7 @@ export default function PwaInstall() {
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
     return () => {
+      window.removeEventListener("load", registerWorker);
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
     };
@@ -65,7 +76,18 @@ export default function PwaInstall() {
     }
   }
 
-  if (installed || (!promptEvent && !showIosInstall)) return null;
+  const available = !installed && Boolean(promptEvent || showIosInstall);
 
-  return <button type="button" onClick={install}>INSTALL ↗</button>;
+  return (
+    <button
+      type="button"
+      className={`pwa-install ${available ? "is-ready" : "is-reserved"}`}
+      onClick={install}
+      disabled={!available}
+      aria-hidden={!available}
+      tabIndex={available ? 0 : -1}
+    >
+      INSTALL ↗
+    </button>
+  );
 }

@@ -37,8 +37,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="preload" as="image" href="/nebu-garden.webp" media="(min-width:561px)" />
         <link rel="preload" as="image" href="/nebu-garden-sm.webp" media="(max-width:560px)" />
         <link rel="preload" as="image" href="/nebu-neutral.webp" fetchPriority="high" />
+        <link rel="preload" as="image" href="/nebu-avatar.webp" />
         <link rel="preload" as="image" href="/nebu-cover.webp" />
         <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-400.woff2" crossOrigin="anonymous" />
+        <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-700.woff2" crossOrigin="anonymous" />
         <link rel="preload" as="font" type="font/woff2" href="/fonts/barlow-condensed-700.woff2" crossOrigin="anonymous" />
       </head>
       <body>

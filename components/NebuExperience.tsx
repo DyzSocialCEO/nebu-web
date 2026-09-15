@@ -44,7 +44,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   const pulseKey = useRef(0);
   const pulseHide = useRef(0);
   const [demoMode, setDemoMode] = useState(false);
-  const [criticalReady, setCriticalReady] = useState(false);
   const [facesLoaded, setFacesLoaded] = useState(false);
   const plate = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
@@ -52,34 +51,17 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
   useEffect(() => {
     let active = true;
-    const garden = window.matchMedia("(max-width: 560px)").matches ? "/nebu-garden-sm.webp" : "/nebu-garden.webp";
-    const safety = window.setTimeout(() => { if (active) setCriticalReady(true); }, 2400);
-
-    Promise.all([warmImage(garden), warmImage("/nebu-neutral.webp")]).then(() => {
-      if (!active) return;
-      window.clearTimeout(safety);
-      setCriticalReady(true);
-    });
-
-    return () => {
-      active = false;
-      window.clearTimeout(safety);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!criticalReady) return;
-    let active = true;
     const timer = window.setTimeout(() => {
       Promise.all(faceFrames.map(warmImage)).then(() => {
         if (active) setFacesLoaded(true);
       });
-    }, 350);
+    }, 700);
+
     return () => {
       active = false;
       window.clearTimeout(timer);
     };
-  }, [criticalReady]);
+  }, []);
 
   function flashKing(frame: Exclude<KingFrame, "neutral">, duration = 950) {
     setKingFrame(frame);
@@ -184,8 +166,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
   }, []);
 
   return (
-    <main className={`world ${criticalReady ? "nebu-ready" : ""}`} aria-busy={!criticalReady}>
-      <style>{`.world:not(.nebu-ready) .plate,.world:not(.nebu-ready) .coins,.world:not(.nebu-ready) .stage,.world:not(.nebu-ready) .pulse,.world:not(.nebu-ready) .mark{visibility:hidden}`}</style>
+    <main className="world">
       <div ref={plate} className="plate" aria-hidden="true" />
       <div className="vignette" aria-hidden="true" />
 

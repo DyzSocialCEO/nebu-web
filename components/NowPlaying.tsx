@@ -48,7 +48,7 @@ export default function NowPlaying({ title, imageUrl, hasAudio }: Props) {
   return (
     <div className={`now-playing ${playing ? "is-playing" : ""}`}>
       <button type="button" onClick={toggle} aria-label={playing ? `Pause ${title}` : `Play ${title}`}>
-        <img src={imageUrl || "/nebu-cover.webp"} alt="" width={120} height={120} loading="lazy" decoding="async" />
+        <img src={imageUrl || "/nebu-cover.webp"} alt="" width={120} height={120} loading="eager" decoding="async" />
         <span className="now-playing__text">
           <small>{failed ? "SPEAKERS ARE BEING DIFFICULT" : "NOW PLAYING"}</small>
           <b>{title}</b>
