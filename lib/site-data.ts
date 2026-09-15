@@ -24,6 +24,7 @@ export type SiteData = {
   heroCopy: string;
   characterUrl: string;
   contractAddress: string;
+  buyUrl: string;
   featuredBroadcast: FeaturedBroadcast;
   lore: Array<{ code: string; title: string; copy: string }>;
   tracks: Array<{ id: string; title: string; audioUrl: string; story: string; imageUrl: string; credit: string }>;
@@ -38,6 +39,7 @@ export const defaultSiteData: SiteData = {
   heroCopy: "I don't have a job. I have a rap career and a thesis.",
   characterUrl: "/nebu-neutral.webp",
   contractAddress: "",
+  buyUrl: "",
   featuredBroadcast: {
     title: "HE SAID SOON",
     subtitle: "I MADE ANOTHER ONE. YOU'RE WELCOME.",
@@ -112,6 +114,7 @@ export function normalizeSiteData(value: unknown): SiteData {
     heroCopy: cleanString(input.heroCopy, defaultSiteData.heroCopy, 300),
     characterUrl: cleanString(input.characterUrl, defaultSiteData.characterUrl, 1000) || defaultSiteData.characterUrl,
     contractAddress: cleanString(input.contractAddress, defaultSiteData.contractAddress, 200),
+    buyUrl: safeHttpsLink(input.buyUrl),
     featuredBroadcast: {
       title: cleanString(featured.title, defaultSiteData.featuredBroadcast.title, 120) || defaultSiteData.featuredBroadcast.title,
       subtitle: cleanString(featured.subtitle, defaultSiteData.featuredBroadcast.subtitle, 120),
