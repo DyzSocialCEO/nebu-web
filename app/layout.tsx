@@ -1,16 +1,25 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./player-inline.css";
 import "./hire-cta.css";
+import "./launch-actions.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nebuchadrektzar.xyz"),
   alternates: { canonical: "/" },
   title: "NEBUCHADREKTZAR — $N3BU",
   description: "I’m not wrong. I’m early. King. Rapper. Formerly extremely liquid. NEBUCHADREKTZAR · $N3BU.",
+  manifest: "/manifest.webmanifest",
+  applicationName: "NEBUCHADREKTZAR",
+  appleWebApp: { capable: true, title: "N3BU", statusBarStyle: "black-translucent" },
   icons: { icon: "/nebu-avatar.webp", apple: "/nebu-avatar.webp" },
   openGraph: { title: "NEBUCHADREKTZAR — I’M EARLY.", description: "King. Rapper. Formerly extremely liquid.", images: [{ url: "/nebu-world.webp", width: 1536, height: 1024 }] },
   twitter: { card: "summary_large_image", title: "NEBUCHADREKTZAR — I’M EARLY.", images: ["/nebu-world.webp"] },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#100e17",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
