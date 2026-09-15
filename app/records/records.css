@@ -20,39 +20,42 @@
   box-shadow:0 0 16px rgba(217,239,115,.14);transition:.2s}
 .record-feature__play:hover{box-shadow:0 0 28px rgba(217,239,115,.4)}
 .record-feature__play svg{width:19px;height:19px}
-.record-feature__seek input{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#272230;cursor:pointer}
-.record-feature__seek input::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;
-  background:var(--n3-acid);box-shadow:0 0 10px var(--n3-acid);border:0}
-.record-feature__seek input::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--n3-acid);border:0}
-.record-feature__seek input:disabled{opacity:.6;cursor:default}
-.record-feature__time{display:flex;justify-content:space-between;margin-top:6px;font-size:10.5px;color:#8b8290;
-  font-variant-numeric:tabular-nums}
+.record-feature__state{font:700 11px/1.4 'Barlow Condensed',Impact,sans-serif;letter-spacing:1.8px;
+  color:var(--n3-mute);min-width:0}
+.record-feature.is-playing .record-feature__state{color:var(--n3-acid)}
+.record-feature__state em{display:block;margin-top:5px;font:400 11.5px/1.4 'DM Sans',Arial,sans-serif;
+  letter-spacing:0;color:#d99886}
 .record-feature__disc{width:44px;height:44px;border-radius:50%;background-size:cover;background-position:center;
   border:1px solid rgba(255,255,255,.08);position:relative}
 .record-feature__disc:after{content:'';position:absolute;inset:0;border-radius:50%;
   background:radial-gradient(circle,#0b0a0e 22%,transparent 23%,transparent 39%,rgba(0,0,0,.55) 40%,transparent 41%)}
 .record-feature.is-playing .record-feature__disc{animation:n3-spin 6s linear infinite}
 
-/* the rest */
+/* the rest: rows that hand the track to the persistent player */
 .records-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.records-item{display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:start;padding:12px;
-  border:1px solid rgba(255,255,255,.06);background:rgba(11,9,15,.7);transition:border-color .2s,background .2s}
-.records-item:hover{border-color:rgba(216,184,95,.28);background:rgba(16,13,21,.82)}
-.records-item.is-playing{border-color:rgba(217,239,115,.5)}
-.records-cover{position:relative;width:76px;height:76px;padding:0;border:1px solid rgba(255,255,255,.08);
-  background:#241a2f;cursor:pointer;overflow:hidden;display:block}
+.records-item{border:1px solid rgba(255,255,255,.06);border-left:2px solid transparent;
+  background:rgba(11,9,15,.7);transition:border-color .2s,background .2s}
+.records-item:hover{border-color:rgba(216,184,95,.28);border-left-color:rgba(216,184,95,.28);background:rgba(16,13,21,.82)}
+.records-item.is-playing{border-color:rgba(217,239,115,.45);border-left-color:var(--n3-acid);background:rgba(18,20,12,.5)}
+.records-row{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:14px;align-items:center;
+  width:100%;padding:12px;background:transparent;text-align:left;cursor:pointer}
+.records-cover{position:relative;width:76px;height:76px;border:1px solid rgba(255,255,255,.08);
+  background:#241a2f;overflow:hidden;display:block;flex:0 0 auto}
 .records-cover img{width:100%;height:100%;object-fit:cover;display:block}
 .records-cover-play{position:absolute;inset:0;display:grid;place-items:center;background:rgba(6,5,9,.45);
   opacity:0;transition:opacity .2s;color:#f3eddd}
 .records-cover-play svg{width:26px;height:26px;filter:drop-shadow(0 3px 8px #000a)}
-.records-cover:hover .records-cover-play,.is-playing .records-cover-play{opacity:1}
-.records-cover:focus-visible{outline:2px solid var(--n3-acid);outline-offset:3px}
-.records-body h2{margin:2px 0 0;font:800 20px/1 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;letter-spacing:.2px}
-.records-body p{margin:7px 0 0;font-size:12.5px;line-height:1.55;color:#b4abbd;max-width:52ch}
-.records-credit{color:var(--n3-gold)!important;font-weight:600}
-.records-timeline{display:flex;align-items:center;gap:10px;margin-top:10px}
-.records-timeline input{flex:1;min-width:0;accent-color:var(--n3-acid)}
-.records-timeline span{font-size:10.5px;color:#8b8290;font-variant-numeric:tabular-nums}
+.records-row:hover .records-cover-play,.is-playing .records-cover-play{opacity:1}
+.records-row:focus-visible{outline:2px solid var(--n3-acid);outline-offset:3px}
+.records-body{min-width:0;display:block}
+.records-title{display:block;font:800 20px/1 'Barlow Condensed',Impact,sans-serif;text-transform:uppercase;letter-spacing:.2px}
+.records-story{display:block;margin-top:7px;font-size:12.5px;line-height:1.55;color:#b4abbd;max-width:52ch}
+.records-credit{display:block;margin-top:5px;color:var(--n3-gold);font-weight:600;font-size:12.5px}
+.records-eq{display:flex;align-items:flex-end;gap:2px;height:14px;justify-self:end;flex:0 0 auto}
+.records-eq i{width:2px;background:var(--n3-acid);animation:n3-eq .8s ease-in-out infinite}
+.records-eq i:nth-child(2){animation-delay:.14s}
+.records-eq i:nth-child(3){animation-delay:.28s}
+.records-eq i:nth-child(4){animation-delay:.06s}
 .records-error{display:block;margin-top:8px;font-size:11.5px;color:#d99886}
 .records-empty{grid-column:1/-1;margin:0;color:var(--n3-dim);font-size:14px}
 
@@ -63,20 +66,21 @@
   .record-feature__bar{grid-template-columns:48px minmax(0,1fr);padding:12px 13px;gap:12px}
   .record-feature__play{width:48px;height:48px}
   .record-feature__disc{display:none}
-  .records-item{grid-template-columns:62px minmax(0,1fr);gap:11px;padding:10px}
+  .records-row{grid-template-columns:62px minmax(0,1fr) auto;gap:11px;padding:10px}
   .records-cover{width:62px;height:62px}
-  .records-body h2{font-size:17px}
-  .records-body p{font-size:11.5px;margin-top:5px}
+  .records-title{font-size:17px}
+  .records-story{font-size:11.5px;margin-top:5px}
 }
 
 @media(max-width:380px){
   .record-feature__caption h1{font-size:21px}
   .record-feature__caption p{font-size:11.5px}
-  .records-item{grid-template-columns:52px minmax(0,1fr)}
+  .records-row{grid-template-columns:52px minmax(0,1fr) auto;gap:10px}
   .records-cover{width:52px;height:52px}
 }
 
 @media(prefers-reduced-motion:reduce){
   .records-shell{animation:none!important}
   .record-feature.is-playing .record-feature__disc{animation:none!important}
+  .records-eq i{animation:none!important;height:8px}
 }

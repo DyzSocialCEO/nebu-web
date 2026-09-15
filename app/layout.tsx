@@ -1,13 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import Atmosphere from "@/components/Atmosphere";
 import PageFade from "@/components/PageFade";
+import PlayerBar from "@/components/PlayerBar";
+import PlayerProvider from "@/components/PlayerProvider";
 import SiteNav from "@/components/SiteNav";
+import { buildPlaylist } from "@/lib/playlist";
 import { getSiteData } from "@/lib/site-data";
 import "./globals.css";
 import "./player-inline.css";
 import "./hire-cta.css";
 import "./launch-actions.css";
 import "./public-pages.css";
+import "./player-bar.css";
 import "./final-polish.css";
 
 export const metadata: Metadata = {
@@ -30,6 +34,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const data = await getSiteData();
+  const playlist = buildPlaylist(data);
 
   return (
     <html lang="en">
@@ -44,9 +49,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <link rel="preload" as="font" type="font/woff2" href="/fonts/barlow-condensed-700.woff2" crossOrigin="anonymous" />
       </head>
       <body>
-        <Atmosphere />
-        <SiteNav hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
-        <PageFade>{children}</PageFade>
+        <PlayerProvider tracks={playlist} fallbackCover={data.featuredBroadcast.imageUrl}>
+          <Atmosphere />
+          <SiteNav hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
+          <PageFade>{children}</PageFade>
+          <PlayerBar />
+        </PlayerProvider>
       </body>
     </html>
   );

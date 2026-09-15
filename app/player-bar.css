@@ -1,0 +1,98 @@
+/* the persistent player: one bar, above the router, never unmounted */
+
+/* Pages already pad themselves by --n3-dock, so folding the bar height into it
+   clears the records list, the token and notice shells, the king and the pulse feed at once. */
+body[data-player="on"]{--n3-dock:72px}
+
+.player-bar{position:fixed;left:0;right:0;bottom:0;z-index:48;
+  display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:14px;align-items:center;
+  padding:10px 20px calc(10px + env(safe-area-inset-bottom,0px));
+  background:rgba(9,7,14,.86);backdrop-filter:blur(18px) saturate(120%);
+  border-top:1px solid rgba(217,239,115,.2);box-shadow:0 -18px 44px rgba(0,0,0,.55);
+  animation:n3-in .28s ease both}
+
+.player-bar__cover{width:48px;height:48px;padding:0;background:#241a2f;cursor:pointer;
+  border:1px solid rgba(255,255,255,.09);overflow:hidden;display:block;flex:0 0 auto}
+.player-bar__cover img{width:100%;height:100%;object-fit:cover;display:block}
+.player-bar.is-playing .player-bar__cover{border-color:rgba(217,239,115,.45);
+  box-shadow:0 0 18px rgba(217,239,115,.18)}
+
+.player-bar__body{min-width:0}
+.player-bar__meta{display:block;width:100%;padding:0;background:transparent;text-align:left;cursor:pointer}
+.player-bar__meta small{display:block;font:700 8px/1 'Barlow Condensed',Impact,sans-serif;
+  letter-spacing:2px;color:var(--n3-gold)}
+.player-bar__meta b{display:block;margin-top:4px;font:800 17px/1 'Barlow Condensed',Impact,sans-serif;
+  letter-spacing:.3px;color:var(--n3-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.player-seek{display:flex;align-items:center;gap:10px;margin-top:6px}
+.player-seek time{font-size:10.5px;color:var(--n3-mute);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.player-seek input{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:4px;background:#272230;cursor:pointer}
+.player-seek input::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;
+  background:var(--n3-acid);box-shadow:0 0 10px var(--n3-acid);border:0}
+.player-seek input::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--n3-acid);border:0}
+.player-seek input:disabled{opacity:.55;cursor:default}
+
+.player-bar__controls{display:flex;align-items:center;gap:6px}
+.player-step{width:36px;height:36px;display:grid;place-items:center;background:transparent;
+  color:var(--n3-dim);border:1px solid transparent;cursor:pointer;transition:.18s}
+.player-step:hover{color:var(--n3-ink);border-color:var(--n3-line);background:rgba(255,255,255,.04)}
+.player-step svg{width:15px;height:15px}
+.player-play{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;cursor:pointer;
+  border:1px solid rgba(217,239,115,.45);background:#111016;color:var(--n3-acid);
+  box-shadow:0 0 16px rgba(217,239,115,.14);transition:.2s}
+.player-play:hover{box-shadow:0 0 28px rgba(217,239,115,.42)}
+.player-play svg{width:16px;height:16px}
+
+/* expanded sheet */
+.player-sheet{position:fixed;inset:0;z-index:55;display:flex;flex-direction:column;
+  padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,rgba(9,7,14,.97),rgba(7,6,11,.99));backdrop-filter:blur(24px);
+  animation:n3-rise .3s cubic-bezier(.2,.7,.3,1) both}
+@keyframes n3-rise{from{transform:translateY(100%)}to{transform:none}}
+
+.player-sheet__top{display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+.player-sheet__top small{font:700 8.5px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:2.4px;color:var(--n3-gold)}
+
+.player-sheet__body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;padding:18px 0;text-align:center}
+.player-sheet__body img{width:min(300px,42svh);height:min(300px,42svh);max-width:100%;object-fit:cover;
+  border:1px solid rgba(255,255,255,.08);box-shadow:0 30px 74px rgba(0,0,0,.7)}
+.player-sheet__body h2{margin:0;font:800 clamp(27px,5vw,40px)/.94 'Barlow Condensed',Impact,sans-serif;
+  text-transform:uppercase;letter-spacing:-.4px;text-wrap:balance}
+.player-sheet__body p{margin:0;font-size:13px;line-height:1.6;color:var(--n3-dim);max-width:46ch}
+.player-sheet__credit{color:var(--n3-gold)!important;font-weight:600}
+.player-sheet__error{color:#d99886!important}
+
+.player-sheet__foot{flex:0 0 auto;display:flex;flex-direction:column;gap:14px;
+  width:min(560px,100%);margin:0 auto}
+.player-sheet__controls{display:flex;align-items:center;justify-content:center;gap:22px}
+.player-sheet__controls .player-play{width:58px;height:58px}
+.player-sheet__controls .player-play svg{width:21px;height:21px}
+
+/* the scene card is how you start the broadcast; once the bar is up it would only say the same thing twice */
+body[data-player="on"] .now-playing{display:none}
+.stage{transition:transform .45s cubic-bezier(.2,.7,.3,1),bottom .35s ease}
+
+@media(max-width:860px){
+  /* sit the bar on top of the mobile tab dock rather than over it */
+  body[data-player="on"]{--n3-dock:calc(54px + 64px + env(safe-area-inset-bottom))}
+  .player-bar{bottom:calc(54px + env(safe-area-inset-bottom,0px));padding:9px 14px;
+    grid-template-columns:42px minmax(0,1fr) auto;gap:11px}
+  .player-bar__cover{width:42px;height:42px}
+  .player-bar__meta b{font-size:15px}
+  .player-bar__controls .player-step{display:none}
+  .player-bar__controls .player-expand{display:grid}
+  .player-seek time:last-of-type{display:none}
+  .player-sheet{padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+}
+
+@media(max-width:380px){
+  .player-bar{padding-left:11px;padding-right:11px;gap:9px;grid-template-columns:38px minmax(0,1fr) auto}
+  .player-bar__cover{width:38px;height:38px}
+  .player-bar__meta b{font-size:13.5px}
+  .player-bar__controls .player-expand{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .player-bar,.player-sheet{animation:none!important}
+}

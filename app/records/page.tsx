@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSiteData } from "@/lib/site-data";
+import { buildPlaylist } from "@/lib/playlist";
 import RecordsList from "@/components/RecordsList";
 import "./records.css";
 
@@ -15,21 +16,7 @@ export default async function RecordsPage() {
 
   return (
     <main className="records-page">
-
-      <RecordsList
-        tracks={[
-          {
-            id: "featured",
-            title: data.featuredBroadcast.title,
-            audioUrl: data.featuredBroadcast.audioUrl,
-            story: data.featuredBroadcast.subtitle,
-            imageUrl: data.featuredBroadcast.imageUrl,
-            credit: "",
-          },
-          ...[...data.tracks].reverse(),
-        ].filter(track => track.audioUrl)}
-        fallbackCover={data.featuredBroadcast.imageUrl}
-      />
+      <RecordsList tracks={buildPlaylist(data)} fallbackCover={data.featuredBroadcast.imageUrl} />
     </main>
   );
 }
