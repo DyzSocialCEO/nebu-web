@@ -176,7 +176,7 @@ export default function HireAdminPanel() {
                     <span style={{ fontSize: 11, letterSpacing: 1, color: "#c4d774" }}>{item.status.toUpperCase()} · {item.quotedRate || "?"} $N4X33</span>
                   </div>
                   <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: 14 }}>{item.story}</p>
-                  <div style={{ fontSize: 12, opacity: .72, marginBottom: 14 }}>coin: {item.coin || "—"} · mood: {item.mood || "—"}</div>
+                  <div style={{ fontSize: 12, opacity: .72, marginBottom: 14 }}>coin: {item.coin || "—"} · mood: {item.mood || "—"} · credit: {item.credit || "ANONYMOUS"}</div>
                   <label className={styles.field}><span>PAYMENT TX</span><input readOnly value={item.paymentTx} /></label>
                   <div className={styles.twoCol}>
                     <label className={styles.field}><span>NEBU RESPONSE / REJECTION LINE</span><input value={item.response} onChange={event => patchSubmission(item.id, { response: event.target.value })} placeholder="declined. you handled this far too responsibly." /></label>

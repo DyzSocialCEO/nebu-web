@@ -32,6 +32,7 @@ export default async function RecordsPage() {
             audioUrl: data.featuredBroadcast.audioUrl,
             story: data.featuredBroadcast.subtitle,
             imageUrl: data.featuredBroadcast.imageUrl,
+            credit: "",
           },
           ...[...data.tracks].reverse(),
         ].filter(track => track.audioUrl)}

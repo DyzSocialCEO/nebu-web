@@ -97,6 +97,7 @@ export default function RecordsList({ tracks, fallbackCover }: { tracks: Track[]
               <div className="records-body">
                 <h2>{track.title}</h2>
                 {track.story && <p>{track.story}</p>}
+                {track.credit && <p className="records-credit">inspired by {track.credit}</p>}
 
                 {isActive && (
                   <div className="records-timeline">

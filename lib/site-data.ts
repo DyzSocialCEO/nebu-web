@@ -26,7 +26,7 @@ export type SiteData = {
   contractAddress: string;
   featuredBroadcast: FeaturedBroadcast;
   lore: Array<{ code: string; title: string; copy: string }>;
-  tracks: Array<{ id: string; title: string; audioUrl: string; story: string; imageUrl: string }>;
+  tracks: Array<{ id: string; title: string; audioUrl: string; story: string; imageUrl: string; credit: string }>;
   socials: { x: string; telegram: string };
   hire: HireSettings;
 };
@@ -131,6 +131,7 @@ export function normalizeSiteData(value: unknown): SiteData {
         title: cleanString(track.title, "another masterpiece", 120) || "another masterpiece",
         audioUrl,
         story: cleanString(track.story, "", 400),
+        credit: cleanString(track.credit, "", 80),
         imageUrl: safeMediaLink(track.imageUrl),
       }];
     }) : [],

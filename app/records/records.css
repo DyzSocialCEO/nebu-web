@@ -23,6 +23,7 @@
 
 .records-body h2{font:700 27px/1 'Barlow Condensed',Impact,sans-serif;margin:2px 0 0;text-transform:uppercase;letter-spacing:.3px}
 .records-body p{font-size:14px;line-height:1.55;color:#c8bcd4;margin:9px 0 0;max-width:56ch}
+.records-credit{font:600 17px/1.1 'Caveat',Georgia,serif;color:#d4b76d;margin:8px 0 0!important;font-size:17px!important}
 .records-timeline{display:flex;align-items:center;gap:11px;margin-top:12px}
 .records-timeline input{flex:1;accent-color:#c4d774;min-width:0}
 .records-timeline span{font-size:11px;color:#a396b0;font-variant-numeric:tabular-nums}

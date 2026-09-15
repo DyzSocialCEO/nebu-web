@@ -50,6 +50,7 @@ export async function POST(request: Request) {
 
     const saved = createHireSubmission({
       handle: body.handle,
+      credit: body.credit,
       story: body.story,
       coin: body.coin,
       mood: body.mood,

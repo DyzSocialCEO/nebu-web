@@ -6,6 +6,7 @@ import styles from "./HireExperience.module.css";
 
 type FormState = {
   handle: string;
+  credit: string;
   story: string;
   coin: string;
   mood: string;
@@ -15,6 +16,7 @@ type FormState = {
 
 const emptyForm: FormState = {
   handle: "",
+  credit: "",
   story: "",
   coin: "",
   mood: "",
@@ -137,7 +139,12 @@ export default function HireExperience({ initialData }: { initialData: SiteData 
               <form className={styles.form} onSubmit={submit}>
                 <label className={styles.field}>
                   <span>WHO ARE YOU</span>
-                  <input required maxLength={80} value={form.handle} onChange={event => setField("handle", event.target.value)} placeholder="@handle. somebody has to receive the credit." />
+                  <input required maxLength={80} value={form.handle} onChange={event => setField("handle", event.target.value)} placeholder="@handle. this is how i reach you, not what goes on the track." />
+                </label>
+
+                <label className={styles.field}>
+                  <span>CREDIT ON THE TRACK — OPTIONAL</span>
+                  <input maxLength={80} value={form.credit} onChange={event => setField("credit", event.target.value)} placeholder="@yourname on x or telegram. leave empty and nobody knows it was you." />
                 </label>
 
                 <label className={styles.field}>

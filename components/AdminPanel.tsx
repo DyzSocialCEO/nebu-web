@@ -12,6 +12,7 @@ const emptyTrack = () => ({
   audioUrl: "",
   story: "",
   imageUrl: "",
+  credit: "",
 });
 
 function cloneData(data: SiteData): SiteData {
@@ -354,6 +355,14 @@ export default function AdminPanel() {
                     value={track.imageUrl}
                     placeholder="https://.../cover.webp"
                     onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, imageUrl: event.target.value } : item))}
+                  />
+                  <input
+                    aria-label={`Track ${index + 1} credit`}
+                    type="text"
+                    maxLength={80}
+                    value={track.credit}
+                    placeholder="inspired by @handle (optional)"
+                    onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, credit: event.target.value } : item))}
                   />
                   <textarea
                     className={styles.trackStory}
