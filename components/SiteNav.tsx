@@ -1,42 +1,42 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import PwaInstall from "@/components/PwaInstall";
 
-type ActiveTab = "nebu" | "records" | "token" | "notice";
-
-const tabs: Array<{ key: ActiveTab; label: string; href: string }> = [
+const tabs = [
   { key: "nebu", label: "NEBU", href: "/" },
   { key: "records", label: "RECORDS", href: "/records" },
   { key: "token", label: "$N3BU", href: "/token" },
   { key: "notice", label: "NOTICE", href: "/notice" },
-];
+] as const;
 
-type Props = {
-  active: ActiveTab;
-  hireEnabled?: boolean;
-  buyUrl?: string;
-};
+export default function SiteNav({ hireEnabled = false, buyUrl = "" }: { hireEnabled?: boolean; buyUrl?: string }) {
+  const pathname = usePathname() || "/";
+  const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-export default function SiteNav({ active, hireEnabled = false, buyUrl = "" }: Props) {
   return (
     <>
       <header className="site-head">
-        <a className="site-head__brand" href="/">
+        <Link className="site-head__brand" href="/" prefetch>
           <img src="/nebu-avatar.webp" alt="" width={160} height={160} loading="eager" decoding="async" />
           <span>
             <b>NEBUCHADREKTZAR</b>
             <small>SOLANA &middot; $N3BU</small>
           </span>
-        </a>
+        </Link>
 
         <nav className="site-head__nav" aria-label="Sections">
           {tabs.map(tab => (
-            <a
+            <Link
               key={tab.key}
-              className={active === tab.key ? "is-active" : ""}
               href={tab.href}
-              aria-current={active === tab.key ? "page" : undefined}
+              prefetch
+              className={isActive(tab.href) ? "is-active" : ""}
+              aria-current={isActive(tab.href) ? "page" : undefined}
             >
               {tab.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -54,15 +54,16 @@ export default function SiteNav({ active, hireEnabled = false, buyUrl = "" }: Pr
 
       <nav className="site-dock" aria-label="Sections">
         {tabs.map(tab => (
-          <a
+          <Link
             key={tab.key}
-            className={active === tab.key ? "is-active" : ""}
             href={tab.href}
-            aria-current={active === tab.key ? "page" : undefined}
+            prefetch
+            className={isActive(tab.href) ? "is-active" : ""}
+            aria-current={isActive(tab.href) ? "page" : undefined}
           >
             <i aria-hidden="true" />
             {tab.label}
-          </a>
+          </Link>
         ))}
       </nav>
     </>

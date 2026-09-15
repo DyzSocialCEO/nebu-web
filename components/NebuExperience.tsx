@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import NowPlaying from "@/components/NowPlaying";
-import SiteNav from "@/components/SiteNav";
 import { pickPulseLine, type PulseLine } from "@/lib/pulse-bank";
 import type { SiteData } from "@/lib/site-data";
 
@@ -224,8 +223,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         ))}
       </div>
 
-      <SiteNav active="nebu" hireEnabled={initialData.hire.enabled} buyUrl={initialData.buyUrl} />
-
       <div ref={stage} className="stage">
         <div className="king-stack" aria-label="NEBUCHADREKTZAR">
           <img className="king" src="/nebu-neutral.webp" alt="NEBUCHADREKTZAR" width={1154} height={1363} loading="eager" fetchPriority="high" decoding="sync" />
@@ -237,12 +234,16 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         </div>
         <button className="king-hit" onClick={nextThought} aria-label="Another thought from NEBU" />
 
-        <button className="thought" onClick={nextThought} aria-label="Another thought from NEBU">
-          <span key={thought} className="thought-anim">
-            <strong>{thoughts[thought][0]}<br /><em>{thoughts[thought][1]}</em></strong>
-            <small>{thoughts[thought][2]}</small>
-          </span>
-        </button>
+        <div className="say">
+          <p className="origin-line">formerly extremely liquid. now i rap.</p>
+
+          <button className="thought" onClick={nextThought} aria-label="Another thought from NEBU">
+            <span key={thought} className="thought-anim">
+              <strong>{thoughts[thought][0]}<br /><em>{thoughts[thought][1]}</em></strong>
+              <small>{thoughts[thought][2]}</small>
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="pulse" aria-live="polite">

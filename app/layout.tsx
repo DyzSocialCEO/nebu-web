@@ -1,4 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import Atmosphere from "@/components/Atmosphere";
+import PageFade from "@/components/PageFade";
+import SiteNav from "@/components/SiteNav";
+import { getSiteData } from "@/lib/site-data";
 import "./globals.css";
 import "./player-inline.css";
 import "./hire-cta.css";
@@ -23,7 +27,9 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const data = await getSiteData();
+
   return (
     <html lang="en">
       <head>
@@ -34,7 +40,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="preload" as="font" type="font/woff2" href="/fonts/dm-sans-400.woff2" crossOrigin="anonymous" />
         <link rel="preload" as="font" type="font/woff2" href="/fonts/barlow-condensed-700.woff2" crossOrigin="anonymous" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Atmosphere />
+        <SiteNav hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
+        <PageFade>{children}</PageFade>
+      </body>
     </html>
   );
 }

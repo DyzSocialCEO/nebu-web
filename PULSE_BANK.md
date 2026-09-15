@@ -93,7 +93,6 @@ He can be annoyed. He can be affected. He can never be WRONG and he can never be
 57. this is the boring part. the boring part is where it is made
 58. I have refreshed this page forty times. nothing. it is fine
 59. everybody is asleep. I do not sleep
-60. still here. still early. still recording
 
 ## PRICE UP
 

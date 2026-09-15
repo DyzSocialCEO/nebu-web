@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Atmosphere from "@/components/Atmosphere";
-import SiteNav from "@/components/SiteNav";
 import { getSiteData } from "@/lib/site-data";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +13,6 @@ export default async function NoticePage() {
 
   return (
     <main className="notice-page">
-      <Atmosphere />
-      <SiteNav active="notice" hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
 
       <section className="notice-shell">
         <article className="notice-card">

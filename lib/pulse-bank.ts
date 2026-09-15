@@ -95,7 +95,6 @@ export const pulseBank: Record<PulseCategory, PulseLine[]> = {
     line(57, "this is the boring part. the boring part is where it is made", "this-is"),
     line(58, "i have refreshed this page forty times. nothing. it is fine", "i-have"),
     line(59, "everybody is asleep. i do not sleep", "everybody"),
-    line(60, "still here. still early. still recording", "still"),
   ],
   price_up: [
     line(61, "told you", "told-you"),

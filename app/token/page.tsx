@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Atmosphere from "@/components/Atmosphere";
-import SiteNav from "@/components/SiteNav";
 import TokenPanel from "@/components/TokenPanel";
 import { getSiteData } from "@/lib/site-data";
 
@@ -16,8 +14,6 @@ export default async function TokenPage() {
 
   return (
     <main className="token-page">
-      <Atmosphere />
-      <SiteNav active="token" hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
 
       <section className="token-shell">
         <h1>$N3BU</h1>

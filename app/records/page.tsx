@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Atmosphere from "@/components/Atmosphere";
 import { getSiteData } from "@/lib/site-data";
 import RecordsList from "@/components/RecordsList";
-import SiteNav from "@/components/SiteNav";
 import "./records.css";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +15,6 @@ export default async function RecordsPage() {
 
   return (
     <main className="records-page">
-      <Atmosphere />
-      <SiteNav active="records" hireEnabled={data.hire.enabled} buyUrl={data.buyUrl} />
 
       <RecordsList
         tracks={[
