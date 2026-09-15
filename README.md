@@ -1,4 +1,4 @@
-# NEBUCHADREKTZAR · $N4X33
+# NEBUCHADREKTZAR · $N3BU
 
 Read [NEBU-MASTER.md](NEBU-MASTER.md) to recover the project and [RELEASE.md](RELEASE.md) for release status.
 
