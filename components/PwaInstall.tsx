@@ -26,7 +26,7 @@ export default function PwaInstall() {
 
     const registerWorker = () => {
       if (!("serviceWorker" in navigator)) return;
-      workerTimer = globalThis.setTimeout(() => {
+      workerTimer = window.setTimeout(() => {
         navigator.serviceWorker.register("/sw.js").catch(() => undefined);
       }, 350);
     };
@@ -38,7 +38,7 @@ export default function PwaInstall() {
       setInstalled(true);
       return () => {
         window.removeEventListener("load", registerWorker);
-        globalThis.clearTimeout(workerTimer);
+        window.clearTimeout(workerTimer);
       };
     }
 
@@ -60,7 +60,7 @@ export default function PwaInstall() {
       window.removeEventListener("load", registerWorker);
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
-      globalThis.clearTimeout(workerTimer);
+      window.clearTimeout(workerTimer);
     };
   }, []);
 
