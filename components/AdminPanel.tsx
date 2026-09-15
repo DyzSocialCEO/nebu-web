@@ -122,7 +122,7 @@ export default function AdminPanel() {
       }
     }
 
-    for (const [label, value] of [["X", data.socials.x], ["Telegram", data.socials.telegram]] as Array<[string, string]>) {
+    for (const [label, value] of [["Buy URL", data.buyUrl], ["X", data.socials.x], ["Telegram", data.socials.telegram]] as Array<[string, string]>) {
       if (value && !/^https:\/\//i.test(value)) return `${label} must use HTTPS.`;
     }
 
@@ -258,6 +258,17 @@ export default function AdminPanel() {
               placeholder="Paste the live contract address when launched"
             />
             <small>Leave blank before launch. The public note will show CA SOON.</small>
+          </label>
+
+          <label className={styles.field}>
+            <span>BUY / LAUNCH URL</span>
+            <input
+              type="url"
+              value={draft.buyUrl}
+              onChange={event => setField("buyUrl", event.target.value)}
+              placeholder="https://www.stonkfun.xyz/..."
+            />
+            <small>Paste the exact live $N3BU StonkFun page after launch. BUY stays hidden while this is blank.</small>
           </label>
 
           <div className={styles.twoCol}>
