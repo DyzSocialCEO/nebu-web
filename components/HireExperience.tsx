@@ -81,7 +81,7 @@ export default function HireExperience({ initialData }: { initialData: SiteData 
             <img src="/nebu-avatar.webp" alt="" />
             <span>
               <b>NEBUCHADREKTZAR</b>
-              <span>$N4X33</span>
+              <span>$N3BU</span>
             </span>
           </a>
           <a className={styles.back} href="/">BACK TO THE RECORD ↗</a>
@@ -99,7 +99,7 @@ export default function HireExperience({ initialData }: { initialData: SiteData 
             <div className={styles.aside}>
               <div>
                 <small>MY RATE TODAY</small>
-                <b>{initialData.hire.rateAmount ? `${initialData.hire.rateAmount} $N4X33` : "management forgot to price me"}</b>
+                <b>{initialData.hire.rateAmount ? `${initialData.hire.rateAmount} $N3BU` : "management forgot to price me"}</b>
               </div>
               <div>
                 <small>PAY ME HERE</small>
@@ -158,7 +158,7 @@ export default function HireExperience({ initialData }: { initialData: SiteData 
 
                 <label className={styles.field}>
                   <span>PROVE YOU PAID ME</span>
-                  <input required maxLength={240} value={form.paymentTx} onChange={event => setField("paymentTx", event.target.value)} placeholder="paste the $N4X33 transaction." />
+                  <input required maxLength={240} value={form.paymentTx} onChange={event => setField("paymentTx", event.target.value)} placeholder="paste the $N3BU transaction." />
                 </label>
 
                 <label className={styles.honeypot} aria-hidden="true">
