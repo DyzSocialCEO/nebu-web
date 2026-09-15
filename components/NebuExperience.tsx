@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import PwaInstall from "@/components/PwaInstall";
 import { pickPulseLine, type PulseLine } from "@/lib/pulse-bank";
 import type { SiteData } from "@/lib/site-data";
 
@@ -329,6 +330,25 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
     }
   }
 
+  async function shareSite() {
+    const url = window.location.origin;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "NEBUCHADREKTZAR | $N3BU",
+          text: "the rapper for the trenches.",
+          url,
+        });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopyState("site link copied.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setCopyState("share failed — copy the site link.");
+    }
+  }
+
   return (
     <main className={`world ${criticalReady ? "nebu-ready" : ""}`} aria-busy={!criticalReady}>
       <style>{`.world:not(.nebu-ready) .plate,.world:not(.nebu-ready) .coins,.world:not(.nebu-ready) .stage,.world:not(.nebu-ready) .pulse,.world:not(.nebu-ready) .mark,.world:not(.nebu-ready) .management-note{visibility:hidden}`}</style>
@@ -403,7 +423,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
           {mediaError && <span role="alert" className="inline-media-error">speakers are being difficult.</span>}
 
-
           <audio
             ref={player}
             preload="none"
@@ -446,11 +465,16 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
           <div className="token-heading"><b>$N3BU</b></div>
           <label>CONTRACT ADDRESS</label>
           <code>{initialData.contractAddress || "NOT SET YET"}</code>
-          <div className="token-actions">
+          {initialData.buyUrl && (
+            <a className="buy-action" href={initialData.buyUrl} target="_blank" rel="noopener noreferrer">BUY $N3BU ↗</a>
+          )}
+          <div className="token-actions launch-utilities">
             {initialData.contractAddress ? <>
               <button onClick={copyAddress}>COPY CA ↗</button>
               <a href={chartUrl} target="_blank" rel="noopener noreferrer">CHART ↗</a>
             </> : <span>CA SOON</span>}
+            <button type="button" onClick={shareSite}>SHARE ↗</button>
+            <PwaInstall />
           </div>
           {initialData.hire.enabled && (
             <div className="token-actions">
