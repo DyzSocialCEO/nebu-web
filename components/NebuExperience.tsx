@@ -13,7 +13,7 @@ type SignedAudio = {
 
 const thoughts = [
   ["i’m not wrong.", "i’m early.", "very fucking early."],
-  ["my wealth", "is resting.", "do not disturb it."],
+  ["portfolio update?", "absolutely not.", "mind your business."],
   ["take profits?", "take what?", "i have principles."],
   ["we just", "got here.", "it has been nine months."],
   ["the house is", "being renovated.", "indefinitely."],
@@ -431,15 +431,14 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
       <a className="mark" href="/" aria-label="NEBUCHADREKTZAR home">
         <img src="/nebu-avatar.webp" alt="" width={160} height={160} loading="eager" decoding="async" />
-        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>i lost everything. now i’m a rapper.</i></span>
+        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>the rapper for the trenches.</i></span>
       </a>
 
       <aside className="management-note">
         <span className="tape" aria-hidden="true" />
         <small>A NOTE FROM NEBU</small>
         <h1>buy the token.<br />support the arts.</h1>
-        <p>i lost everything. now i’m a rapper.</p>
-        <span className="correction">my wealth is resting.</span>
+        <p>i make music now. shit happened.</p>
 
         <div className="token-block">
           <div className="token-heading"><b>$N4X33</b></div>
