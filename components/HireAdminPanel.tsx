@@ -139,7 +139,7 @@ export default function HireAdminPanel() {
 
           <div className={styles.twoCol}>
             <label className={styles.field}>
-              <span>RATE IN $N4X33</span>
+              <span>RATE IN $N3BU</span>
               <input value={site.hire.rateAmount} onChange={event => setSite({ ...site, hire: { ...site.hire, rateAmount: event.target.value } })} placeholder="e.g. 250000" />
             </label>
             <label className={styles.field}>
@@ -150,7 +150,7 @@ export default function HireAdminPanel() {
 
           <label className={styles.field}>
             <span>COMMISSION WALLET</span>
-            <textarea rows={2} value={site.hire.walletAddress} onChange={event => setSite({ ...site, hire: { ...site.hire, walletAddress: event.target.value } })} placeholder="Wallet that receives $N4X33" />
+            <textarea rows={2} value={site.hire.walletAddress} onChange={event => setSite({ ...site, hire: { ...site.hire, walletAddress: event.target.value } })} placeholder="Wallet that receives $N3BU" />
           </label>
 
           <label className={styles.field} style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 12 }}>
@@ -173,7 +173,7 @@ export default function HireAdminPanel() {
                 <article key={item.id} style={{ border: "1px solid #3b3543", padding: 18, background: "#16131c" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
                     <div><b>{item.handle}</b><div style={{ fontSize: 11, opacity: .65, marginTop: 4 }}>{new Date(item.createdAt).toLocaleString()}</div></div>
-                    <span style={{ fontSize: 11, letterSpacing: 1, color: "#c4d774" }}>{item.status.toUpperCase()} · {item.quotedRate || "?"} $N4X33</span>
+                    <span style={{ fontSize: 11, letterSpacing: 1, color: "#c4d774" }}>{item.status.toUpperCase()} · {item.quotedRate || "?"} $N3BU</span>
                   </div>
                   <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: 14 }}>{item.story}</p>
                   <div style={{ fontSize: 12, opacity: .72, marginBottom: 14 }}>coin: {item.coin || "—"} · mood: {item.mood || "—"} · credit: {item.credit || "ANONYMOUS"}</div>
