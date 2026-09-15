@@ -19,6 +19,14 @@ function cloneData(data: SiteData): SiteData {
   return JSON.parse(JSON.stringify(data)) as SiteData;
 }
 
+function normalizeXInput(value: string): string {
+  const input = value.trim();
+  if (!input) return "";
+  if (/^https:\/\//i.test(input)) return input;
+  const handle = input.replace(/^@/, "");
+  return /^[A-Za-z0-9_]{1,15}$/.test(handle) ? `https://x.com/${handle}` : input;
+}
+
 export default function AdminPanel() {
   const [key, setKey] = useState("");
   const [draft, setDraft] = useState<SiteData | null>(null);
@@ -122,9 +130,10 @@ export default function AdminPanel() {
       }
     }
 
-    for (const [label, value] of [["Buy URL", data.buyUrl], ["X", data.socials.x], ["Telegram", data.socials.telegram]] as Array<[string, string]>) {
-      if (value && !/^https:\/\//i.test(value)) return `${label} must use HTTPS.`;
-    }
+    if (data.buyUrl && !/^https:\/\//i.test(data.buyUrl)) return "Buy URL must use HTTPS.";
+
+    const xUrl = normalizeXInput(data.socials.x);
+    if (xUrl && !/^https:\/\//i.test(xUrl)) return "X must be a handle like @N3B_U or a full HTTPS URL.";
 
     const incompleteTrack = data.tracks.findIndex(track => !track.audioUrl.trim());
     if (incompleteTrack !== -1) return `Archive track ${incompleteTrack + 1} needs an audio URL or should be removed.`;
@@ -139,15 +148,19 @@ export default function AdminPanel() {
       setMessage(validationError);
       return;
     }
+
+    const payload = cloneData(draft);
+    payload.socials.x = normalizeXInput(payload.socials.x);
+
     setState("saving");
     setMessage("");
     try {
-      const data = await adminRequest("PUT", draft);
+      const data = await adminRequest("PUT", payload);
       const clean = cloneData(data);
       setDraft(clean);
       setSavedSnapshot(JSON.stringify(clean));
       setState("saved");
-      setMessage("Published to persistent site data.");
+      setMessage("Saved. Public site data updated.");
       window.setTimeout(() => setState(current => current === "saved" ? "idle" : current), 2200);
     } catch (error) {
       setState("error");
@@ -167,7 +180,7 @@ export default function AdminPanel() {
       setSavedSnapshot(JSON.stringify(clean));
       setDraft(current => current ? { ...current, hire: { ...current.hire, enabled: clean.hire.enabled } } : clean);
       setState("saved");
-      setMessage(open ? "Commissions open. HIRE ME is back on the site." : "Commissions closed. HIRE ME is off the site.");
+      setMessage(open ? "Commissions open. HIRE ME is visible." : "Commissions closed. HIRE ME is hidden.");
       window.setTimeout(() => setState(current => current === "saved" ? "idle" : current), 2600);
     } catch (error) {
       setDraft(current => current ? { ...current, hire: { ...current.hire, enabled: !open } } : current);
@@ -197,7 +210,7 @@ export default function AdminPanel() {
             </div>
           </div>
           <h1>admin.</h1>
-          <p>This page exposes no site data until the server accepts the admin key.</p>
+          <p>Enter the private key to manage the public site.</p>
           <label className={styles.field}>
             <span>ADMIN KEY</span>
             <input
@@ -229,10 +242,13 @@ export default function AdminPanel() {
           <img src="/nebu-avatar.webp" alt="" />
           <div>
             <b>NEBU PUBLISHING DESK</b>
-            <span>{dirty ? "UNSAVED CHANGES" : "LIVE DATA LOADED"}</span>
+            <span>{dirty ? "UNSAVED CHANGES" : state === "saved" ? "SAVED" : "LIVE DATA LOADED"}</span>
           </div>
         </div>
         <div className={styles.headerActions}>
+          <button className={styles.saveTop} onClick={save} disabled={!dirty || state === "saving" || state === "loading"}>
+            {state === "saving" ? "SAVING…" : "SAVE CHANGES"}
+          </button>
           <a href="/" target="_blank" rel="noreferrer">OPEN SITE ↗</a>
           <button onClick={reload} disabled={state === "loading" || state === "saving"}>RELOAD</button>
           <button onClick={forgetKey}>LOCK</button>
@@ -240,113 +256,101 @@ export default function AdminPanel() {
       </header>
 
       <div className={styles.grid}>
-        <section className={styles.card}>
+        <section className={`${styles.card} ${styles.full}`}>
           <div className={styles.sectionHead}>
             <div>
               <span>01</span>
-              <h2>token + socials</h2>
+              <h2>launch details</h2>
             </div>
-            <small>What visitors can actually act on.</small>
+            <small>CA + buy link + X. Nothing else needed for launch.</small>
           </div>
 
-          <label className={styles.field}>
-            <span>CONTRACT ADDRESS</span>
-            <textarea
-              rows={2}
-              value={draft.contractAddress}
-              onChange={event => setField("contractAddress", event.target.value)}
-              placeholder="Paste the live contract address when launched"
-            />
-            <small>Leave blank before launch. The public note will show CA SOON.</small>
-          </label>
+          <div className={styles.routeNote}>
+            <b>WHERE THESE APPEAR</b>
+            <span>CA and X appear on the $N3BU tab. The buy link powers BUY $N3BU on the token page and desktop header.</span>
+          </div>
 
-          <label className={styles.field}>
-            <span>BUY / LAUNCH URL</span>
-            <input
-              type="url"
-              value={draft.buyUrl}
-              onChange={event => setField("buyUrl", event.target.value)}
-              placeholder="https://www.stonkfun.xyz/..."
-            />
-            <small>Paste the exact live $N3BU StonkFun page after launch. BUY stays hidden while this is blank.</small>
-          </label>
-
-          <div className={styles.twoCol}>
+          <div className={styles.launchGrid}>
             <label className={styles.field}>
-              <span>X / TWITTER URL</span>
+              <span>CONTRACT ADDRESS</span>
+              <textarea
+                rows={2}
+                value={draft.contractAddress}
+                onChange={event => setField("contractAddress", event.target.value)}
+                placeholder="Paste the live Solana contract address"
+              />
+              <small>Leave blank before launch. The $N3BU page shows CA SOON.</small>
+            </label>
+
+            <label className={styles.field}>
+              <span>BUY / LAUNCH URL</span>
               <input
                 type="url"
+                value={draft.buyUrl}
+                onChange={event => setField("buyUrl", event.target.value)}
+                placeholder="https://www.stonkfun.xyz/..."
+              />
+              <small>Use the exact live launch page. BUY stays hidden while blank.</small>
+            </label>
+
+            <label className={styles.field}>
+              <span>X HANDLE OR URL</span>
+              <input
                 value={draft.socials.x}
                 onChange={event => setField("socials", { ...draft.socials, x: event.target.value })}
-                placeholder="https://x.com/..."
+                placeholder="@N3B_U or https://x.com/N3B_U"
               />
-            </label>
-            <label className={styles.field}>
-              <span>TELEGRAM URL</span>
-              <input
-                type="url"
-                value={draft.socials.telegram}
-                onChange={event => setField("socials", { ...draft.socials, telegram: event.target.value })}
-                placeholder="https://t.me/..."
-              />
+              <small>You can paste just the handle. We save it as the proper X URL.</small>
             </label>
           </div>
         </section>
 
-        <section className={styles.card}>
+        <section className={`${styles.card} ${styles.full}`}>
           <div className={styles.sectionHead}>
             <div>
               <span>02</span>
               <h2>current record</h2>
             </div>
-            <small>Artwork + audio. That is the record.</small>
+            <small>The record shown first on Records and in Now Playing.</small>
           </div>
+
+          <label className={styles.field}>
+            <span>TITLE</span>
+            <input
+              value={draft.featuredBroadcast.title}
+              onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, title: event.target.value })}
+              placeholder="HE SAID SOON"
+            />
+          </label>
 
           <div className={styles.twoCol}>
             <label className={styles.field}>
-              <span>TITLE</span>
+              <span>CUSTOM COVER (OPTIONAL)</span>
               <input
-                value={draft.featuredBroadcast.title}
-                onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, title: event.target.value })}
-                placeholder="HE SAID SOON"
+                type="url"
+                value={draft.featuredBroadcast.imageUrl}
+                onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, imageUrl: event.target.value })}
+                placeholder="https://.../cover.webp"
               />
+              <small>Leave blank to use the approved NEBU artwork.</small>
             </label>
+
             <label className={styles.field}>
-              <span>SUBTITLE / INTERNAL</span>
+              <span>AUDIO URL</span>
               <input
-                value={draft.featuredBroadcast.subtitle}
-                onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, subtitle: event.target.value })}
-                placeholder="Optional compatibility field"
+                type="url"
+                value={draft.featuredBroadcast.audioUrl}
+                onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, audioUrl: event.target.value })}
+                placeholder="https://.../track.mp3"
               />
+              <small>Bunny/CDN HTTPS URL.</small>
             </label>
           </div>
 
-          <label className={styles.field}>
-            <span>CUSTOM COVER (OPTIONAL)</span>
-            <input
-              type="url"
-              value={draft.featuredBroadcast.imageUrl}
-              onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, imageUrl: event.target.value })}
-              placeholder="Leave blank to use NEBUCHADREKTZAR"
-            />
-            <small>Leave blank and the site uses the approved NEBUCHADREKTZAR artwork automatically.</small>
-          </label>
-
-          <label className={styles.field}>
-            <span>AUDIO URL</span>
-            <input
-              type="url"
-              value={draft.featuredBroadcast.audioUrl}
-              onChange={event => setField("featuredBroadcast", { ...draft.featuredBroadcast, audioUrl: event.target.value })}
-              placeholder="https://.../track.mp3"
-            />
-            <small>Bunny/CDN HTTPS URL. Storage credentials never belong here.</small>
-          </label>
-
           <div className={styles.mediaPreview}>
             <div>
-              <span>PLAYER WILL USE</span>
-              <b>{draft.featuredBroadcast.audioUrl ? "AUDIO + ARTWORK" : "WAITING STATE"}</b>
+              <span>PUBLIC PLAYER</span>
+              <b>{draft.featuredBroadcast.audioUrl ? "READY" : "WAITING FOR AUDIO"}</b>
             </div>
             <img src={draft.featuredBroadcast.imageUrl || "/nebu-approved.webp"} alt="Current release preview" />
           </div>
@@ -362,7 +366,7 @@ export default function AdminPanel() {
           </div>
 
           {draft.tracks.length === 0 ? (
-            <p className={styles.empty}>No archive tracks. That is fine.</p>
+            <p className={styles.empty}>No older records yet.</p>
           ) : (
             <div className={styles.trackList}>
               {draft.tracks.map((track, index) => (
@@ -393,7 +397,7 @@ export default function AdminPanel() {
                     type="text"
                     maxLength={80}
                     value={track.credit}
-                    placeholder="inspired by @handle (optional)"
+                    placeholder="credit (optional)"
                     onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, credit: event.target.value } : item))}
                   />
                   <textarea
@@ -402,7 +406,7 @@ export default function AdminPanel() {
                     rows={2}
                     maxLength={400}
                     value={track.story}
-                    placeholder="what he says about it. i was told to make something hopeful. i made this instead."
+                    placeholder="optional note about the record"
                     onChange={event => setField("tracks", draft.tracks.map((item, i) => i === index ? { ...item, story: event.target.value } : item))}
                   />
                   <button
@@ -433,8 +437,8 @@ export default function AdminPanel() {
 
           <p className={styles.empty}>
             {draft.hire.enabled
-              ? "HIRE ME is on the site and the form accepts submissions."
-              : "HIRE ME is hidden, /hire is unreachable, submissions are refused. This switch saves the moment you press it."}
+              ? "HIRE ME is visible and the form accepts submissions."
+              : "HIRE ME is hidden. This switch saves immediately."}
           </p>
 
           <div className={styles.twoCol}>
@@ -444,36 +448,22 @@ export default function AdminPanel() {
                 onChange={event => setField("hire", { ...draft.hire, rateAmount: event.target.value })} />
             </label>
             <label className={styles.field}>
-              <span>WALLET THAT RECEIVES PAYMENT</span>
-              <input maxLength={200} value={draft.hire.walletAddress} placeholder="your solana address"
+              <span>PAYMENT WALLET</span>
+              <input maxLength={200} value={draft.hire.walletAddress} placeholder="solana address"
                 onChange={event => setField("hire", { ...draft.hire, walletAddress: event.target.value })} />
             </label>
           </div>
-          <p className={styles.empty}>The form only opens when this is OPEN and both boxes are filled. Rate and wallet publish with PUBLISH.</p>
-        </section>
-
-        <section className={`${styles.card} ${styles.full}`}>
-          <div className={styles.sectionHead}>
-            <div>
-              <span>05</span>
-              <h2>pulse</h2>
-            </div>
-            <span className={styles.standby}>STANDBY</span>
-          </div>
-          <div className={styles.pulseStatus}>
-            <b>68 NEBU reactions are loaded.</b>
-            <p>No real chain adapter is connected yet, so production must not manufacture buys, sells, balances or price moves. The public character may use silence lines only until the actual chain, pair/source and threshold unit are confirmed.</p>
-          </div>
+          <p className={styles.empty}>Rate and wallet save with SAVE CHANGES.</p>
         </section>
       </div>
 
       <footer className={styles.savebar}>
         <div>
-          <b>{dirty ? "UNPUBLISHED CHANGES" : state === "saved" ? "PUBLISHED" : "NO UNSAVED CHANGES"}</b>
-          <span>{message || "Persistent JSON is written atomically to DATA_DIR/site.json."}</span>
+          <b>{dirty ? "UNSAVED CHANGES" : state === "saved" ? "SAVED" : "ALL CHANGES SAVED"}</b>
+          <span className={state === "error" ? styles.errorText : ""}>{message || "Changes are stored in the persistent site data."}</span>
         </div>
         <button className={styles.primary} onClick={save} disabled={!dirty || state === "saving" || state === "loading"}>
-          {state === "saving" ? "PUBLISHING…" : "PUBLISH"}
+          {state === "saving" ? "SAVING…" : "SAVE CHANGES"}
         </button>
       </footer>
     </main>

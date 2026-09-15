@@ -13,6 +13,8 @@ const tabs = [
 
 export default function SiteNav({ hireEnabled = false, buyUrl = "" }: { hireEnabled?: boolean; buyUrl?: string }) {
   const pathname = usePathname() || "/";
+  if (pathname.startsWith("/n4x33-ops-18763")) return null;
+
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (

@@ -5,9 +5,10 @@ import { useState } from "react";
 type Props = {
   contractAddress: string;
   buyUrl: string;
+  xUrl: string;
 };
 
-export default function TokenPanel({ contractAddress, buyUrl }: Props) {
+export default function TokenPanel({ contractAddress, buyUrl, xUrl }: Props) {
   const [status, setStatus] = useState("");
   const chartUrl = contractAddress
     ? `https://dexscreener.com/search?q=${encodeURIComponent(contractAddress)}`
@@ -62,6 +63,7 @@ export default function TokenPanel({ contractAddress, buyUrl }: Props) {
 
       <div className="token-utility-row">
         {chartUrl && <a href={chartUrl} target="_blank" rel="noopener noreferrer">CHART ↗</a>}
+        {xUrl && <a href={xUrl} target="_blank" rel="noopener noreferrer">X ↗</a>}
         <button type="button" onClick={shareSite}>SHARE ↗</button>
       </div>
 

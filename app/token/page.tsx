@@ -18,7 +18,7 @@ export default async function TokenPage() {
       <section className="token-shell">
         <h1>$N3BU</h1>
         <span className="token-chain">SOLANA</span>
-        <TokenPanel contractAddress={data.contractAddress} buyUrl={data.buyUrl} />
+        <TokenPanel contractAddress={data.contractAddress} buyUrl={data.buyUrl} xUrl={data.socials.x} />
       </section>
     </main>
   );
