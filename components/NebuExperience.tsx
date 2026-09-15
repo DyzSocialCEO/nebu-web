@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import NowPlaying from "@/components/NowPlaying";
 import SiteNav from "@/components/SiteNav";
 import { pickPulseLine, type PulseLine } from "@/lib/pulse-bank";
 import type { SiteData } from "@/lib/site-data";
@@ -223,7 +224,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         ))}
       </div>
 
-      <SiteNav active="nebu" hireEnabled={initialData.hire.enabled} />
+      <SiteNav active="nebu" hireEnabled={initialData.hire.enabled} buyUrl={initialData.buyUrl} />
 
       <div ref={stage} className="stage">
         <div className="king-stack" aria-label="NEBUCHADREKTZAR">
@@ -249,10 +250,11 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
         {pulse && <div key={pulse.key} className="pulse-message">{pulse.text}</div>}
       </div>
 
-      <a className="mark" href="/" aria-label="NEBUCHADREKTZAR home">
-        <img src="/nebu-avatar.webp" alt="" width={160} height={160} loading="eager" decoding="async" />
-        <span><b>NEBUCHADREKTZAR</b><small>$N3BU</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>the rapper for the trenches.</i></span>
-      </a>
+      <NowPlaying
+        title={initialData.featuredBroadcast.title}
+        imageUrl={initialData.featuredBroadcast.imageUrl}
+        hasAudio={Boolean(initialData.featuredBroadcast.audioUrl)}
+      />
     </main>
   );
 }

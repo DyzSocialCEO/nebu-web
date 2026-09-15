@@ -50,11 +50,10 @@ export default function RecordsList({ tracks, fallbackCover }: { tracks: Track[]
 
     try {
       if (activeId !== track.id) {
-        const endpoint = track.id === "featured" ? "/api/audio/sign" : `/api/audio/sign?track=${encodeURIComponent(track.id)}`;
-        const response = await fetch(endpoint, {
-          cache: "no-store",
-          headers: { Accept: "application/json" },
-        });
+        const endpoint = track.id === "featured"
+          ? "/api/audio/sign"
+          : `/api/audio/sign?track=${encodeURIComponent(track.id)}`;
+        const response = await fetch(endpoint, { cache: "no-store", headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error("sign");
         const signed = await response.json() as { url?: string };
         if (!signed.url) throw new Error("sign");
@@ -75,59 +74,112 @@ export default function RecordsList({ tracks, fallbackCover }: { tracks: Track[]
     return <p className="records-empty">nothing here yet. i am working on it. constantly. ask anyone.</p>;
   }
 
+  const [featured, ...rest] = tracks;
+  const featuredActive = activeId === featured.id;
+  const featuredCover = featured.imageUrl || fallbackCover || "/nebu-cover.webp";
+
   return (
-    <>
-      <ol className="records-list">
-        {tracks.map((track, index) => {
-          const isActive = activeId === track.id;
-          const cover = track.imageUrl || fallbackCover || "/nebu-approved.webp";
-          return (
-            <li key={track.id} className={`records-item ${isActive && playing ? "is-playing" : ""}`}>
-              <span className="records-index">{String(tracks.length - index).padStart(2, "0")}</span>
+    <div className="records-shell">
+      <section className={`record-feature ${featuredActive && playing ? "is-playing" : ""}`}>
+        <div className="record-feature__art">
+          <img src={featuredCover} alt="" width={900} height={900} loading="eager" decoding="async" />
+          <div className="record-feature__caption">
+            <h1>{featured.title}</h1>
+            {featured.story && <p>{featured.story}</p>}
+            {featured.credit && <p className="records-credit">inspired by {featured.credit}</p>}
+          </div>
+        </div>
 
-              <button
-                className="records-cover"
-                onClick={() => toggle(track)}
-                aria-label={`${isActive && playing ? "Pause" : "Play"} ${track.title}`}
-              >
-                <img src={cover} alt="" width={200} height={200} loading="lazy" decoding="async" />
-                <span className="records-cover-play"><PlayIcon pause={isActive && playing} /></span>
-              </button>
+        <div className="record-feature__bar">
+          <button
+            className="record-feature__play"
+            onClick={() => toggle(featured)}
+            aria-label={`${featuredActive && playing ? "Pause" : "Play"} ${featured.title}`}
+          >
+            <PlayIcon pause={featuredActive && playing} />
+          </button>
 
-              <div className="records-body">
-                <h2>{track.title}</h2>
-                {track.story && <p>{track.story}</p>}
-                {track.credit && <p className="records-credit">inspired by {track.credit}</p>}
+          <div className="record-feature__seek">
+            <input
+              aria-label={`Seek ${featured.title}`}
+              type="range"
+              min="0"
+              max={featuredActive && duration > 0 ? duration : 1}
+              step="0.1"
+              value={featuredActive && duration > 0 ? Math.min(progress, duration) : 0}
+              disabled={!featuredActive || duration <= 0}
+              onChange={event => {
+                const audio = player.current;
+                if (audio && featuredActive && duration > 0) {
+                  const next = Math.min(Number(event.target.value), duration);
+                  audio.currentTime = next;
+                  setProgress(next);
+                }
+              }}
+            />
+            <div className="record-feature__time">
+              <span>{featuredActive ? formatTime(progress) : "0:00"}</span>
+              <span>{featuredActive && duration > 0 ? formatTime(duration) : "--:--"}</span>
+            </div>
+          </div>
 
-                {isActive && (
-                  <div className="records-timeline">
-                    <input
-                      aria-label={`Seek ${track.title}`}
-                      type="range"
-                      min="0"
-                      max={duration > 0 ? duration : 1}
-                      step="0.1"
-                      value={duration > 0 ? Math.min(progress, duration) : 0}
-                      disabled={duration <= 0}
-                      onChange={event => {
-                        const audio = player.current;
-                        if (audio && duration > 0) {
-                          const next = Math.min(Number(event.target.value), duration);
-                          audio.currentTime = next;
-                          setProgress(next);
-                        }
-                      }}
-                    />
-                    <span>{formatTime(progress)} / {duration > 0 ? formatTime(duration) : "--:--"}</span>
-                  </div>
-                )}
+          <span className="record-feature__disc" aria-hidden="true" style={{ backgroundImage: `url(${featuredCover})` }} />
+        </div>
 
-                {failed === track.id && <span role="alert" className="records-error">speakers are being difficult.</span>}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+        {failed === featured.id && <span role="alert" className="records-error">speakers are being difficult.</span>}
+      </section>
+
+      {rest.length > 0 && (
+        <ol className="records-list">
+          {rest.map(track => {
+            const isActive = activeId === track.id;
+            const cover = track.imageUrl || fallbackCover || "/nebu-cover.webp";
+            return (
+              <li key={track.id} className={`records-item ${isActive && playing ? "is-playing" : ""}`}>
+                <button
+                  className="records-cover"
+                  onClick={() => toggle(track)}
+                  aria-label={`${isActive && playing ? "Pause" : "Play"} ${track.title}`}
+                >
+                  <img src={cover} alt="" width={200} height={200} loading="lazy" decoding="async" />
+                  <span className="records-cover-play"><PlayIcon pause={isActive && playing} /></span>
+                </button>
+
+                <div className="records-body">
+                  <h2>{track.title}</h2>
+                  {track.story && <p>{track.story}</p>}
+                  {track.credit && <p className="records-credit">inspired by {track.credit}</p>}
+
+                  {isActive && (
+                    <div className="records-timeline">
+                      <input
+                        aria-label={`Seek ${track.title}`}
+                        type="range"
+                        min="0"
+                        max={duration > 0 ? duration : 1}
+                        step="0.1"
+                        value={duration > 0 ? Math.min(progress, duration) : 0}
+                        disabled={duration <= 0}
+                        onChange={event => {
+                          const audio = player.current;
+                          if (audio && duration > 0) {
+                            const next = Math.min(Number(event.target.value), duration);
+                            audio.currentTime = next;
+                            setProgress(next);
+                          }
+                        }}
+                      />
+                      <span>{formatTime(progress)} / {duration > 0 ? formatTime(duration) : "--:--"}</span>
+                    </div>
+                  )}
+
+                  {failed === track.id && <span role="alert" className="records-error">speakers are being difficult.</span>}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      )}
 
       <audio
         ref={player}
@@ -141,6 +193,6 @@ export default function RecordsList({ tracks, fallbackCover }: { tracks: Track[]
         onEnded={() => { setPlaying(false); setProgress(0); }}
         onError={() => { setPlaying(false); setFailed(activeId); }}
       />
-    </>
+    </div>
   );
 }
