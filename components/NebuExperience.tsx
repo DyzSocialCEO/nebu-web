@@ -13,7 +13,7 @@ type SignedAudio = {
 
 const thoughts = [
   ["i’m not wrong.", "i’m early.", "very fucking early."],
-  ["portfolio update?", "absolutely not.", "mind your business."],
+  ["my wealth", "is resting.", "do not disturb it."],
   ["take profits?", "take what?", "i have principles."],
   ["we just", "got here.", "it has been nine months."],
   ["the house is", "being renovated.", "indefinitely."],
@@ -371,6 +371,7 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
               <img src={cover} alt="" width={480} height={480} loading="eager" fetchPriority="high" decoding="sync" />
               <b>{broadcast.title}</b>
               {canAudio && <span className="cover-play"><PlayIcon pause={playing} /></span>}
+              {initialData.tracks.length > 0 && <span className="sleeve-count">{initialData.tracks.length + 1} RECORDS</span>}
             </span>
             <span className="record-note">{canAudio ? (playing ? "playing. obviously. ♫" : "i made another one. ▶") : "the masterpiece is loading."}</span>
           </button>
@@ -402,11 +403,6 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
           {mediaError && <span role="alert" className="inline-media-error">speakers are being difficult.</span>}
 
-          {initialData.tracks.length > 0 && (
-            <a className="record-more" href="/records">
-              {initialData.tracks.length === 1 ? "one more of these" : `${initialData.tracks.length} more of these`} &#8594;
-            </a>
-          )}
 
           <audio
             ref={player}
@@ -431,14 +427,21 @@ export default function NebuExperience({ initialData }: { initialData: SiteData 
 
       <a className="mark" href="/" aria-label="NEBUCHADREKTZAR home">
         <img src="/nebu-avatar.webp" alt="" width={160} height={160} loading="eager" decoding="async" />
-        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>the rapper for the trenches.</i></span>
+        <span><b>NEBUCHADREKTZAR</b><small>$N4X33</small><i style={{ color: "#f3ead1", fontSize: "16px", fontWeight: 600, textShadow: "0 2px 12px #0d0a13, 0 0 18px #0d0a13" }}>i lost everything. now i’m a rapper.</i></span>
       </a>
+
+      {initialData.tracks.length > 0 && (
+        <nav className="scene-nav">
+          <a href="/records">RECORDS <b>{initialData.tracks.length + 1}</b></a>
+        </nav>
+      )}
 
       <aside className="management-note">
         <span className="tape" aria-hidden="true" />
         <small>A NOTE FROM NEBU</small>
         <h1>buy the token.<br />support the arts.</h1>
-        <p>i make music now. shit happened.</p>
+        <p>i lost everything. now i’m a rapper.</p>
+        <span className="correction">my wealth is resting.</span>
 
         <div className="token-block">
           <div className="token-heading"><b>$N4X33</b></div>
