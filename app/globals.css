@@ -22,7 +22,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 .coins i{position:absolute;top:-12vh;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe9a8,#d9a93a 60%,#8a5f16);box-shadow:0 0 12px rgba(226,180,86,.45);animation:fall linear infinite;opacity:.78}
 @keyframes fall{0%{translate:0 0;rotate:0deg}100%{translate:0 124vh;rotate:520deg}}
 
-.stage{position:absolute;z-index:3;bottom:var(--n3-dock);left:50%;transform:translateX(-50%);height:auto;width:min(43vw,77.9vh);aspect-ratio:1154/1363;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
+.stage{position:absolute;z-index:3;bottom:var(--n3-dock);left:50%;transform:translateX(-50%);height:auto;width:min(43vw,calc((100svh - var(--n3-head) - var(--n3-dock) - 26px) * .846));aspect-ratio:1154/1363;will-change:transform;transition:transform .45s cubic-bezier(.2,.7,.3,1)}
 .king-stack{position:absolute;inset:0;animation:breathe 11s ease-in-out infinite;filter:drop-shadow(0 34px 64px rgba(0,0,0,.6));pointer-events:none;user-select:none}
 .king{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:bottom;display:block}
 .king-face{position:absolute;left:28.596%;top:5.136%;width:44.194%;height:31.548%;object-fit:fill;display:block;opacity:0;transition:opacity .1s linear}
@@ -107,7 +107,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 
 /* laptops and small desktops: he shrinks so the side gutters survive */
 @media(max-width:1240px){
-  .stage{width:min(41vw,72.8vh)}
+  .stage{width:min(41vw,calc((100svh - var(--n3-head) - var(--n3-dock) - 24px) * .846))}
   .say{width:min(26vw,320px);top:1%}
   .thought small{font-size:19px;margin-top:9px}
   .record{width:min(15vw,150px);bottom:6%}
@@ -118,7 +118,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 
 /* tablet: gutters gone, the thought moves above his head */
 @media(max-width:900px){
-  .stage{height:auto;width:min(70vw,440px);max-width:none;bottom:10vh}
+  .stage{height:auto;width:min(70vw,440px,calc((100svh - var(--n3-head) - var(--n3-dock) - 130px) * .846));max-width:none;bottom:10vh}
   .say{left:50%;margin-left:0;top:auto;bottom:100%;margin-bottom:3.5vh;transform:translateX(-50%) rotate(-2deg);width:min(86vw,520px)}
   .thought{text-align:center}
   .thought strong{font-size:clamp(30px,6vw,44px)}
@@ -146,7 +146,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 /* phones */
 @media(max-width:560px){
   .plate{inset:-2%;background-position:center 46%;background-image:url('/nebu-garden-sm.webp'),url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABMNDhEODBMRDxEVFBMXHTAfHRoaHToqLCMwRT1JR0Q9Q0FMVm1dTFFoUkFDX4JgaHF1e3x7SlyGkIV3j214e3b/2wBDARQVFR0ZHTgfHzh2T0NPdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnb/wAARCAATABwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDlyn3cjgj070pjCn+98pPFEILfxZ9Qf51IY3LNhWxkkcVPMWPjMUULDYGLp1Yfd57VX2IeW6nnmpY4iY2BXJB/iBqFiyEjd+YoTBkcbsvQkVZ8+UpgyNj60UUCQ+WR1tyyuwLdeetUCSeSSTRRQEj/2Q==')}
-  .stage{width:86vw;bottom:13vh}
+  .stage{width:min(86vw,calc((100svh - var(--n3-head) - var(--n3-dock) - 120px) * .846));bottom:13vh}
   .say{margin-bottom:3vh;width:92vw}
   .thought strong{font-size:clamp(27px,8.4vw,36px)}
   .thought small{font-size:18px;margin-top:7px}
